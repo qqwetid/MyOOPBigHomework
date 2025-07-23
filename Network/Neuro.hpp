@@ -21,6 +21,7 @@ typedef std::vector<Dendrite> MyDndrtType;
 //开发者：Jason Cheng   日期：2025/7/18
 //更改记录：    2025/7/21   添加删除树突的函数
 //              2025/7/21   将AddDendrite的函数名修改为InsertDendrite
+//              2025/7/23   增加了Signal函数带参数的重载
 //----------------------------------------------------------------------------------------------------------
 
 class Neuro
@@ -28,7 +29,7 @@ class Neuro
     public:
         //构造函数，赋值运算符重载，拷贝构造函数
         //构造函数设置偏置（默认为0），激活函数序号（默认为0）；树突后面再添加
-        Neuro(double bias_set = 0, int NumOfActvtnFunc_set = 0, int NumOfDndrts = 100, unsigned int NeuroID_set = s_uNeuroCount + 1);
+        Neuro(double bias_set = 0, int NumOfActvtnFunc_set = 0, int NumOfDndrts = 100, unsigned int NeuroID_set = s_uNeuroCount);
         //赋值运算符重载
         Neuro& operator=(const Neuro& Source);
         //拷贝构造函数
@@ -39,6 +40,8 @@ class Neuro
 
         //接受树突的信息，并进行整合和输出
         double Signal();            //对私有数据成员 m_dSignalNow 进行了修改，所以不加const
+        //接受一个信息，被第一个树突处理后整合和输出
+        double Signal(double Input);//对私有成员 m_rSignalNow 进行了修改，所以不加const
 
         //Getters
         const Soma& MySoma {m_MySoma};                  //获取细胞体Soma

@@ -2,7 +2,7 @@
 //Layer.cpp
 //功能模块：Layer类的成员函数；目的：定义类的成员函数
 //开发者：Jason Cheng   日期：2025/7/120
-//更改记录：
+//更改记录：2025/7/23 增加带有参数的ForwardPropagation和输出当前信号的LayerSignalNow
 //----------------------------------------------------------------------------------------------------------
 
 #include <iostream>
@@ -96,6 +96,68 @@ void Layer::ForwardPropagation() {
         {
             (iter->second).Signal();    //对每个神经元分别计算传播
         }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ForwardPropagation
+//函数功能：接受一个信号数组，数组个数需与层内神经元数量相同。经过每个神经元第一个树突运算后，以层为单位进行前向传播
+//参数：const double* InputVector, unsigned int DimOfInput, 均为输入参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Layer::ForwardPropagation(const double* InputVector, unsigned int DimOfInput) {
+    if (GetNeuroNumber() == 0) {            //若这一层没有神经元，throw错误信息
+        throw std::invalid_argument("Error: No Neuro in this Layer!");
+    }
+    if (GetNeuroNumber() != DimOfInput) {   //若维数不匹配，throw错误信息
+        throw std::invalid_argument("Error: Dimension of your input vector does not fit the number of neurons in this Layer.");
+    }
+    MyNeurosType::iterator iter_Neuros = m_MyNeuros.begin();//遍历所有神经元
+    int i = 0;
+    while (iter_Neuros != m_MyNeuros.end()) {
+        (iter_Neuros->second).Signal(*(InputVector + i));   //在每个神经元内分别传播
+        i++;
+        iter_Neuros++;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：LayerSignalNow
+//函数功能：输出当前信号
+//参数：
+/*      double* OutputVector            输出参数，接收当前信号
+        unsigned int DimToReserve       输入参数，表示接收的信号个数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Layer::LayerSignalNow(double* OutputVector, unsigned int DimToReserve) const {
+    if (DimToReserve > m_MyNeuros.size()) { //如果向量的维数比神经元数量多，输出警告
+        std::cout << "Warning: There are only " << m_MyNeuros.size() 
+                  << " Neuros, and dimension of your vector is " << DimToReserve << "." << std::endl;
+    }
+    else if (DimToReserve < m_MyNeuros.size()) {    //如果向量维数比神经元数量少，输出警告
+        std::cout << "Warning: There are " << m_MyNeuros.size() << " Neuros, but dimension of your vecotr is not enough." << std::endl;
+        std::cout << "Signal of the output will be cut off." << std::endl;
+    }
+    MyNeurosType::const_iterator const_iter_Neuros = m_MyNeuros.begin();
+    int i = 0;
+    while (i < DimToReserve) {
+        if(const_iter_Neuros != m_MyNeuros.end())   //当神经元还没用完时，用神经元赋值
+        {
+            *(OutputVector + i) = (const_iter_Neuros->second).SignalNow;
+            const_iter_Neuros++;
+        }
+        else
+        {
+            *(OutputVector + i) = 0;
+        }
+        i++;
     }
 }
 
@@ -235,6 +297,19 @@ void Layer::DeleteNeuro(unsigned int IDToDelete) {
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：ClearAllNeuros
+//函数功能：清除层内所有神经元
+//参数：无
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Layer::ClearAllNeuros() {
+    m_MyNeuros.clear();
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：ToString
 //函数功能：获取当前层的信息
 //参数：无
@@ -249,7 +324,7 @@ std::string Layer::ToString() const {
     MyNeurosType::const_iterator const_iter = m_MyNeuros.begin();
     while (const_iter != m_MyNeuros.end())
     {
-        Stream << "################################ Neuros in Layer ################################" << std::endl;
+        Stream << " ############################### Neuros in Layer ###################################" << std::endl;
         Stream << (const_iter->second).ToString() << std::endl;
         const_iter++;
     }

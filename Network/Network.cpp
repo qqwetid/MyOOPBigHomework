@@ -25,13 +25,15 @@
 //----------------------------------------------------------------------------------------------------------
 //函数名称：Network（构造函数）
 //函数功能：构造一个Network类对象，并构造第一层
-//参数：const char* NetworkName, unsigned int NumOfNursInFstLyr
+//参数：const char* NetworkName, unsigned int NumOfNursInFstLyr, unsigned int NumberOfLayers
 //返回值：无
 //开发者：Jason Cheng   日期：2025/7/21
-//更改记录
+//更改记录              2025/7/23   增加变量NumberOfLayers
 //----------------------------------------------------------------------------------------------------------
 
-Network::Network(const char* NetworkName, unsigned int NumOfNursInFstLyr) {
+Network::Network(const char* NetworkName, unsigned int NumOfNursInFstLyr, unsigned int NumberOfLayers) {
+    //初始化层
+    m_MyLayers.reserve(NumberOfLayers);
     //先给神经网络名字
     if (strlen(NetworkName) >= 40)      //若NetworkName过长，则throw错误信息，并将名字赋成错误信息
     {
@@ -339,14 +341,13 @@ bool Network::IsValid() const {
 /*          const double* DataInput,            输入参数，进行数据的导入
             unsigned int SizeOfDataVector,      输入参数，提供导入数据的大小
             double* SignalOutput,               输出参数，提供输出数组的接口
-            unsigned int& SizeofSgnl            输出参数，提供期望输出数组大小
+            unsigned int SizeToReserve          输入参数，提供期望输出数组大小
 */
-//返回值：int （用于返回程序是否正确），返回0时函数正确
-//开发者：Jason Cheng   日期：2025/7/22
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
 //更改记录
 //----------------------------------------------------------------------------------------------------------
-
-int Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int& SizeofSgnl) {
+void Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve) {
     /*
     std::vector<double> TrueDataInput(m_MyLayers.begin()->GetNeuroNumber());    //创建向量存放输入的信息
     if (SizeOfDataVector > m_MyLayers.begin()->GetNeuroNumber())                //若输入的数据多于第一层神经元的数量，throw警告信息
@@ -440,8 +441,271 @@ int Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, d
     if (SizeOfDataVector != m_MyLayers.begin()->GetNeuroNumber()) {     //如果数组大小和第一层不匹配，则输出错误信息
         throw std::invalid_argument("Dimension of the input vector does not fit the number of neurons in the first layer.");
     }
-    //待编写
+    if (IsValid() == 1) {               //判断神经网络是否合法，如果合法则继续输出
+        MyLayersType::iterator iter_Layers = m_MyLayers.begin();
+        iter_Layers->ForwardPropagation(DataInput, SizeOfDataVector);   //将信号输入第一层并运算
+        iter_Layers++;
+        while (iter_Layers != m_MyLayers.end()) {                       //将信号逐层传递
+            iter_Layers->ForwardPropagation();
+            iter_Layers++;
+        }
+        iter_Layers = m_MyLayers.end() -1;                              //将指针指到最后一层
+        Layer& MyLastLayer = *iter_Layers;
+        MyLastLayer.LayerSignalNow(SignalOutput, SizeToReserve);        //将信号保存，如果期望接收的大小和实际不符，会输出警告信息
+    }
+    else                                //如果神经网络不合法，则throw警告信息
+    {
+        throw std::invalid_argument("Error: Your network is invalid.\n\tNetwork::IsValid() return 0.Unknown error.");
+    }
 }
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：GetNumberOfLayers
+//函数功能：获取层数
+//参数： 无
+//返回值：unsigned int
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+unsigned int Network::GetNumberOfLayers() const {
+    return m_MyLayers.size();
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：QueryLayer
+//函数功能：根据编号查找层
+//参数： unsigned int NumberInput
+//返回值：Layer*
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+Layer* Network::QueryLayer(unsigned int NumberInput) {
+    if (NumberInput >= m_MyLayers.size())
+    {
+        return nullptr;
+    }
+    else
+    {
+        MyLayersType::iterator iter_Layers = m_MyLayers.begin();
+        iter_Layers += NumberInput;
+        return &(*iter_Layers);
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：QueryNeuro
+//函数功能：根据编号查找神经元
+//参数： unsigned int NumberInput
+//返回值：Neuro*
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+Neuro* Network::QueryNeuro(unsigned int NumberInput) {
+    MyLayersType::iterator iter_Layers = m_MyLayers.begin();
+    Neuro* pAimNeuro = nullptr;                     //指针容器用于存放所找的神经元
+    while (iter_Layers != m_MyLayers.end()) {       //对层循环
+        Layer& ThisLayer = *iter_Layers;
+        pAimNeuro = ThisLayer.Query(NumberInput);
+        if (pAimNeuro != nullptr) {                 //如果找到了，则返回找到的指针
+            return pAimNeuro;
+        }
+        iter_Layers++;
+    }
+    return pAimNeuro;                               //如果没有找到，就是返回nullptr
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：GetNmbrOfNursInFstLyr
+//函数功能：获取第一层的神经元数量
+//参数： 无
+//返回值：unsigned int
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+unsigned int Network::GetNmbrOfNursInFstLyr() const {    
+    if (m_MyLayers.size() == 0)             //如果网络内没有神经元，throw错误信息
+    {
+        std::ostringstream Stream;
+        Stream << "Error: There is no Layer in Network __" << m_cNetworkName << "__ !";
+        throw std::invalid_argument(Stream.str());
+    }
+    const Layer& MyFirstLayer = *(m_MyLayers.begin());
+    return MyFirstLayer.GetNeuroNumber();
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：InsertLayer
+//函数功能：在末尾插入一层
+//参数： Layer& SourceLayer, 输入参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Network::InsertLayer(Layer& SourceLayer) {
+    m_MyLayers.push_back(SourceLayer);
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：InsertLayer
+//函数功能：指定的位置插入一层
+//参数： Layer& SourceLayer, 输入参数 ; unsigned int LayerNumber , 输入参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Network::InsertLayer(Layer& SourceLayer, unsigned int LayerNumber) {
+    if (LayerNumber >= m_MyLayers.size())       //如果指出的层数多于目前拥有的层数，则输出警告并放在末尾
+    {
+        std::cout << "Warning: LayerNumber that you've put in is larger than the number of layers we have now." << std::endl;
+        m_MyLayers.push_back(SourceLayer);
+    }
+    else
+    {
+        MyLayersType::iterator iter_Layers = m_MyLayers.begin() + LayerNumber;
+        m_MyLayers.insert(iter_Layers, SourceLayer);
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：CnnctNursByDndrt
+//函数功能：连接两个神经元
+//参数： 
+/*
+        double WeightToSet,                                     输入参数
+        unsigned int CnnctLayerID, unsigned int CnnctNeuroID    输入参数
+        unsigned int LyingLayerID, unsigned int LyingNeuroID    输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+
+void Network::CnnctNursByDndrt(double WeightToSet, 
+                               unsigned int CnnctLayerID, unsigned int CnnctNeuroID, 
+                               unsigned int LyingLayerID, unsigned int LyingNeuroID) {
+    Layer& CnnctLayer = *(m_MyLayers.begin() + CnnctLayerID);
+    Neuro* pCnnctNeuro = CnnctLayer.Query(CnnctNeuroID);
+    Layer& LyingLayer = *(m_MyLayers.begin() + LyingLayerID);
+    Neuro* pLyingNeuro = LyingLayer.Query(LyingNeuroID);
+    pLyingNeuro->InsertADendrite(WeightToSet, pCnnctNeuro);
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：DeleteLayer
+//函数功能：删除一层以及其所有突触连接
+//参数： 
+/*
+        double WeightToSet,                                     输入参数
+        unsigned int CnnctLayerID, unsigned int CnnctNeuroID    输入参数
+        unsigned int LyingLayerID, unsigned int LyingNeuroID    输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Network::DeleteLayer(unsigned int LayerIDToDelete) {
+    Layer& MyLayerToDelete = *(m_MyLayers.begin() + LayerIDToDelete);
+    //循环所有的树突，找到与MyLayerToDelete中神经元的连接
+    MyLayersType::iterator iter_Layers = m_MyLayers.begin();
+    while (iter_Layers != m_MyLayers.end()) {                           //对层循环
+        Layer& ThisLayer = *iter_Layers;
+        MyNeurosType::const_iterator const_iter_Neuros = ThisLayer.GetMyNeuros().begin();
+        while (const_iter_Neuros != ThisLayer.GetMyNeuros().end()) {    //对神经元循环
+            Neuro* pThisNeuro  = ThisLayer.Query((const_iter_Neuros->second).NeuroID);
+            MyDndrtType::iterator iter_Dndrts = pThisNeuro->SetDendrites().begin();
+            while (iter_Dndrts != pThisNeuro->MyDendrites.end()) {      //对树突循环
+                Dendrite& ThisDndrt = *iter_Dndrts;                     //找到相应的树突
+                unsigned int IterPlace = iter_Dndrts - pThisNeuro->MyDendrites.begin();         //存下这个树突的位置
+                MyNeurosType::const_iterator const_iter_CnnctNurs = MyLayerToDelete.GetMyNeuros().begin();  //准备遍历即将删除的层中的神经元
+                while (const_iter_CnnctNurs != MyLayerToDelete.GetMyNeuros().end()) {           //遍历神经元，寻找是否有相同的地址
+                    if (&(const_iter_CnnctNurs->second) == ThisDndrt.GetNeuro())                //如果这个树突连接了即将删除的层中的神经元
+                    {
+                        pThisNeuro->SetDendrites().erase(iter_Dndrts);                          //删除这个树突
+                        iter_Dndrts = pThisNeuro->SetDendrites().begin() + IterPlace - 1;       //重置这个树突指针
+                        break;                                                                  //跳出这个循环，因为这个树突已经被删除了
+                    }
+                    const_iter_CnnctNurs++;
+                }
+                iter_Dndrts++;
+            }
+            const_iter_Neuros++;
+        }
+        iter_Layers++;
+    }
+
+    //下一步，清除这一层内所有的神经元
+    MyLayerToDelete.ClearAllNeuros();
+    //下一步，从神经网络中清除这一层
+    this->m_MyLayers.erase(m_MyLayers.begin() + LayerIDToDelete);
+    //程序结束
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：DeleteDndrtBtwnNurs
+//函数功能：删除两个连接的神经元
+//参数： 
+/*
+        unsigned int CnnctNeuroID       输入参数，树突接收信号的神经元
+        unsigned int MyNeuroID          输入参数，树突所在的神经元
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+
+void Network::DeleteDndrtBtwnNurs(unsigned int CnnctNeuroID, unsigned int MyNeuroID) {
+    Neuro* pMyNeuro = QueryNeuro(MyNeuroID);
+    Neuro* pCnnctNeuro = QueryNeuro(CnnctNeuroID);
+    if (pMyNeuro == nullptr)                //如果没找到树突所在的神经元，throw错误信息
+    {
+        std::ostringstream Stream;
+        Stream << "Error: Cannot find the Neuro (ID = __" << MyNeuroID << "__ ).";
+        throw std::invalid_argument(Stream.str());
+    }
+    else if (pCnnctNeuro == nullptr)             //如果没找到树突连接的神经元，throw错误信息
+    {
+        std::ostringstream Stream;
+        Stream << "Error: Cannot find the Neuro (ID = __" << CnnctNeuroID << "__ ).";
+        throw std::invalid_argument(Stream.str());
+    }
+    else
+    {
+        pMyNeuro->DeleteDendrite(*pCnnctNeuro);
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ToString
+//函数功能：展示神经网络的信息
+//参数： 无
+//返回值：std::string
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+std::string Network::ToString() const {
+    std::ostringstream Stream;
+    Stream << "**Network**" << std::endl;
+    Stream << "NetworkName:\n\t__" << m_cNetworkName << "__" << std::endl;
+    MyLayersType::const_iterator const_iter_Layers = m_MyLayers.begin();
+    while (const_iter_Layers != m_MyLayers.end()) {
+        Stream << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Layers in Network $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
+        Stream << "Layer Number: " << const_iter_Layers - m_MyLayers.begin() << std::endl;
+        Stream << const_iter_Layers->ToString();
+        const_iter_Layers++;
+    }
+    return Stream.str();
+}
+
 
 int main() {
     Neuro n1, n2, n3, n4;
@@ -459,5 +723,6 @@ int main() {
     Network N1("Network1", 2);
     Network N2("Network2");
     N2 = N1;
+    std::cout << N1.ToString() << std::endl;
     return 0;
 }

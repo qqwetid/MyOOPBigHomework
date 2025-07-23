@@ -21,6 +21,8 @@
 //          ToString()展示层的信息
 //开发者：Jason Cheng   日期：2025/7/20
 //更改记录：        2025/7/22增加静态成员函数HasConnection
+//                  2025/7/23 增加带有参数的ForwardPropagation和输出当前信号的LayerSignalNow
+//                  2025/7/23 增加清除所有神经元的函数ClearAllNeuros
 //----------------------------------------------------------------------------------------------------------
 
 //定义MyNeurosType, 用于储存一个层的神经元
@@ -40,6 +42,10 @@ class Layer
 
         //接受、处理上一层的信号并输出（将信号存储在每个神经元）
         void ForwardPropagation();
+        //接受一个数组作为输入的信号，每个神经元都用第一个树突作用后输出
+        void ForwardPropagation(const double* InputVector, unsigned int DimOfInput);
+        //输出当前信号
+        void LayerSignalNow(double* OutputVector, unsigned int DimToReserve) const;
 
         //Getters
         //获取存储神经元的容器（不可修改）
@@ -56,6 +62,8 @@ class Layer
         void InsertNeuro(Neuro& Neuro_set);
         //删除层中某一编号的所有神经元
         void DeleteNeuro(unsigned int IDToDelete);
+        //删除层中的所有神经元
+        void ClearAllNeuros();
 
         //展示层内所有神经元
         std::string ToString() const;

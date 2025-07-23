@@ -26,10 +26,10 @@ class Network
 {
     public:
         //构造函数
-        Network(const char* NetworkName = "My Network", unsigned int NumOfNursInFstLyr = 1);
-        //运算符重载
+        Network(const char* NetworkName = "My Network", unsigned int NumOfNursInFstLyr = 1, unsigned int NumberOfLayers = 2);
+        //运算符重载，不能复制跨层的连接
         Network& operator=(const Network& Source);
-        //拷贝构造函数
+        //拷贝构造函数，不能复制跨层的连接
         Network(const Network& Source);
         //析构函数
         ~Network();
@@ -40,7 +40,7 @@ class Network
         bool IsValid() const;
 
         //输入参数，让神经网络进行计算
-        int Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int& SizeofSgnl);
+        void Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve);
         
         //Getters
         //获取存储层的容器（不可修改）
@@ -48,19 +48,23 @@ class Network
         //获取层数
         unsigned int GetNumberOfLayers() const;
         //根据编号查找层
-        Layer* Query(unsigned int NumberInput);
+        Layer* QueryLayer(unsigned int NumberInput);
+        //根据编号查找神经元
+        Neuro* QueryNeuro(unsigned int NumberInput);
         //获取第一层神经元的数量
-        unsigned int GetNmbrOfNursInFstLyr();
+        unsigned int GetNmbrOfNursInFstLyr() const;
 
         //Setters
-        //插入一层
+        //在末尾插入一层
         void InsertLayer(Layer& SourceLayer);
-        //为相邻两层的神经元创造突触连接
-        void CnnctNursByDndrt(unsigned int BackLayerID, unsigned int ForwdNeuroID, unsigned int BackNeuroID);
+        //在指定的位置插入一层
+        void InsertLayer(Layer& SourceLayer, unsigned int LayerNumber);
+        //为两层的神经元创造突触连接
+        void CnnctNursByDndrt(double WeightToSet, unsigned int CnnctLayerID, unsigned int CnnctNeuroID, unsigned int LyingLayerID, unsigned int LyingNeuroID);
         //删除一层以及与其有关的所有突出连接
         void DeleteLayer(unsigned int LayerIDToDelete);
         //删除两神经元间的突触连接
-        void DeleteDndrtBtwnNurs(unsigned int BackLayerID, unsigned int ForwdNeuroID, unsigned int BackNeuroID);
+        void DeleteDndrtBtwnNurs(unsigned int CnnctNeuroID, unsigned int MyNeuroID);
 
         //展示神经网络的信息
         std::string ToString() const;

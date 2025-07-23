@@ -4,6 +4,7 @@
 //开发者：Jason Cheng   日期：2025/7/18
 //更改记录      2025/7/20 添加神经元编号后对相应函数进行了一些修改。具体见函数注释
 //              2025/7/21 更改了一些函数名。具体见函数注释
+//              2025/7/23 增加了Signal函数带参数的重载
 //----------------------------------------------------------------------------------------------------------
 
 #include "ActivationFunction.hpp"   //导入激活函数类
@@ -123,7 +124,27 @@ double Neuro::Signal() {
     }
     MySignal = (this->m_MySoma).Output(MySignal);   //信号经过胞体运算后存到MySignal
     MySignal = (this->m_MyAxon).Signal(MySignal);   //信号经过轴突运算后存到MySignal
-    m_rSignalNow = MySignal;                        //将信号存到m_dSignalNow
+    m_rSignalNow = MySignal;                        //将信号存到m_rSignalNow
+    return MySignal;                                //返回MySignal的值作为信号的输出
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Signal
+//函数功能：接受树突的输入，并实现输出
+//参数：double Input  （会改变m_dSignalNow的值）
+//返回值：double
+//开发者：Jason Cheng   日期：2025/7/23
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+double Neuro::Signal(double Input) {
+    double MySignal = Input;
+    if (m_MyDendrites.begin() != m_MyDendrites.end()) { //如果树突个数不为0，则让信号经过树突
+        MySignal = m_MyDendrites.begin()->Signal(Input);//让信号经过树突
+    }
+    MySignal = (this->m_MySoma).Output(MySignal);   //信号经过胞体运算后存到MySignal
+    MySignal = (this->m_MyAxon).Signal(MySignal);   //信号经过轴突运算后存到MySignal
+    m_rSignalNow = MySignal;                        //将信号存到m_rSignalNow
     return MySignal;                                //返回MySignal的值作为信号的输出
 }
 
@@ -313,11 +334,11 @@ std::string Neuro::ToString() const {
     Stream << "**Neuro**" << std::endl;
     Stream << "NeuroID:\t" << m_uNeuroID << std::endl;
     Stream << "Address:\t" << this << std::endl;
-    Stream << "------------------------------- Elements in Neuro -------------------------------" << std::endl;
+    Stream << "  ----------------------------- Elements in Neuro -----------------------------     " << std::endl;
     Stream << "MySoma:\t" << m_MySoma.ToString();
-    Stream << "------------------------------- Elements in Neuro -------------------------------" << std::endl;
+    Stream << "  ----------------------------- Elements in Neuro -----------------------------     " << std::endl;
     Stream << "MyAxon:\t" << m_MyAxon.ToString();
-    Stream << "------------------------------- Elements in Neuro -------------------------------" << std::endl;
+    Stream << "  ----------------------------- Elements in Neuro -----------------------------     " << std::endl;
     Stream << "MyDendrites:\t" << std::endl;
     Stream << std::endl;
     MyDndrtType::const_iterator iter;
@@ -325,7 +346,7 @@ std::string Neuro::ToString() const {
         Stream << iter->ToString();
         Stream << std::endl;
     }
-    Stream << "------------------------------- Elements in Neuro -------------------------------" << std::endl;
+    Stream << "  ----------------------------- Elements in Neuro -----------------------------     " << std::endl;
     Stream << "Signal now:\t" << m_rSignalNow << std::endl;
     return Stream.str();
 }
