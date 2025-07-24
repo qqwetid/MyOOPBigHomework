@@ -67,6 +67,8 @@ class Layer
 
         //展示层内所有神经元
         std::string ToString() const;
+        //展示层内所有神经元（简洁版）
+        std::string ToString_brief() const;
     private:
         MyNeurosType m_MyNeuros;
 };

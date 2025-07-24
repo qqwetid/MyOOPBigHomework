@@ -331,6 +331,47 @@ std::string Layer::ToString() const {
     return Stream.str();
 }
 
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ToString_brief
+//函数功能：展示层内所有神经元（简洁版）
+//参数：无
+//返回值：std::string
+//开发者：Jason Cheng   日期：2025/7/24
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+std::string Layer::ToString_brief() const {
+    std::ostringstream Stream;
+    Stream << "**Layer**" << std::endl;
+    MyNeurosType::const_iterator const_iter_Neuros = m_MyNeuros.begin();
+    while (const_iter_Neuros != m_MyNeuros.end()) {
+        Stream << "  **Neuro**" << std::endl;
+        Stream << "  NeuroID: __" << (const_iter_Neuros->second).NeuroID <<"__." << std::endl;
+        Stream << "  Bias: __" << (const_iter_Neuros->second).MySoma.GetBias() << "__;" << std::endl;
+        Stream << "  Activation Function: __No." << (const_iter_Neuros->second).MySoma.GetActvtnFunc() << " ";
+        switch ((const_iter_Neuros->second).MySoma.GetActvtnFunc()) {
+            case 0:
+                Stream << "f(x) = x";
+                break;
+            case 1:
+                Stream << "Sigmoid()";
+                break;
+            case 2:
+                Stream << "Tanh()";
+                break;
+            case 3:
+                Stream << "ReLU()";
+                break;
+            default:
+                Stream << "Unknown Type";
+                break;
+        }
+        Stream << "__;" << std::endl;
+        const_iter_Neuros++;
+    }
+    return Stream.str();
+}
+
 
 
 

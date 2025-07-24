@@ -250,7 +250,7 @@ void Soma::SetActvtnFunc(const int& NumOfActvtnFunc_set) {
 //参数：无
 //返回值：string
 //开发者：Jason Cheng   日期：2025/7/17
-//更改记录
+//更改记录      2025/7/24   增加default的部分
 //----------------------------------------------------------------------------------------------------------
 
 std::string Soma::ToString() const {
@@ -274,6 +274,10 @@ std::string Soma::ToString() const {
             break;
         case 3:
             Stream << "ReLU Function";
+            break;
+        default:                    //事实上如果判断程序正确，错误的激活函数不会让程序出现在这里
+            Stream << "Unknown Type";
+            break;
     }
     }
     catch(const std::exception& e)

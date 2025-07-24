@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------
-//Network.hpp
+//Network.cpp
 //功能模块：Network类的成员函数；目的：定义Network类的成员函数
 //开发者：Jason Cheng   日期：2025/7/21
 //更改记录：
@@ -706,6 +706,29 @@ std::string Network::ToString() const {
     return Stream.str();
 }
 
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ToString_brief
+//函数功能： 展示神经网络的信息（简洁版）
+//参数： 无
+//返回值：std::string
+//开发者：Jason Cheng   日期：2025/7/24
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+std::string Network::ToString_brief() const {
+    std::ostringstream Stream;
+    Stream << "**Network**" << std::endl;
+    Stream << "NetworkName:\n\t__" << m_cNetworkName << "__" << std::endl;
+    MyLayersType::const_iterator const_iter_Layers = m_MyLayers.begin();
+    while (const_iter_Layers != m_MyLayers.end()) {
+        Stream << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Layers in Network $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
+        Stream << "Layer Number: " << const_iter_Layers - m_MyLayers.begin() << std::endl;
+        Stream << const_iter_Layers->ToString_brief();
+        const_iter_Layers++;
+    }
+    return Stream.str();
+}
+
 
 int main() {
     Neuro n1, n2, n3, n4;
@@ -724,5 +747,6 @@ int main() {
     Network N2("Network2");
     N2 = N1;
     std::cout << N1.ToString() << std::endl;
+    std::cout << N1.ToString_brief() << std::endl;
     return 0;
 }
