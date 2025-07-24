@@ -7,7 +7,8 @@
             "args": [
                 "-g",
                 "${workspaceFolder}\\*.cpp",
-                "${workspaceFolder}\\Network\\*.cpp",     //添加文件夹Network到路径
+                "${workspaceFolder}\\Network\\*.cpp",       //添加文件夹Network到路径
+                "${workspaceFolder}\\Importer\\*.cpp",      //添加文件夹Importer到路径
                 "-o",
                 "${workspaceFolder}/${workspaceRootFolderName}.exe"
             ],
@@ -37,6 +38,7 @@
                 "-g",
                 "${workspaceFolder}\\*.cpp",
                 "${workspaceFolder}\\Network\\*.cpp",     //添加文件夹Network到路径
+                "${workspaceFolder}\\Importer\\*.cpp",      //添加文件夹Importer到路径
                 "-o",
                 "${workspaceFolder}\\${workspaceRootFolderName}.exe"
             ],

@@ -729,7 +729,7 @@ std::string Network::ToString_brief() const {
     return Stream.str();
 }
 
-
+/*
 int main() {
     Neuro n1, n2, n3, n4;
     Layer l1;
@@ -750,3 +750,4 @@ int main() {
     std::cout << N1.ToString_brief() << std::endl;
     return 0;
 }
+    */

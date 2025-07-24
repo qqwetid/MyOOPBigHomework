@@ -14,7 +14,25 @@
 //----------------------------------------------------------------------------------------------------------
 //类名：Network
 //功能：批量管理层
-//接口： 待编写
+//接口： 
+/*
+    *   void Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve);
+    *
+    *   const MyLayersType& MyLayers {m_MyLayers};
+    *   unsigned int GetNumberOfLayers() const;
+    *   Layer* QueryLayer(unsigned int NumberInput);
+    *   Neuro* QueryNeuro(unsigned int NumberInput);
+    *   unsigned int GetNmbrOfNursInFstLyr() const;
+    * 
+    *   void InsertLayer(Layer& SourceLayer);
+    *   void InsertLayer(Layer& SourceLayer, unsigned int LayerNumber);
+    *   void CnnctNursByDndrt(double WeightToSet, unsigned int CnnctLayerID, unsigned int CnnctNeuroID, unsigned int LyingLayerID, unsigned int LyingNeuroID);
+    *   void DeleteLayer(unsigned int LayerIDToDelete);
+    *   void DeleteDndrtBtwnNurs(unsigned int CnnctNeuroID, unsigned int MyNeuroID);
+    * 
+    *   std::string ToString() const;
+    *   std::string ToString_brief() const;
+*/
 //开发者：Jason Cheng   日期：2025/7/20
 //更改记录：
 //----------------------------------------------------------------------------------------------------------
