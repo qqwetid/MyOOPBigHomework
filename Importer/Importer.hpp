@@ -8,13 +8,7 @@
 #ifndef IMPORTER_HPP
 #define IMPORTER_HPP
 
-//----------------------------------------------------------------------------------------------------------
-//类名：Importer
-//功能：作为所有导入器类的母类
-//接口： 待编写
-//开发者：Jason Cheng   日期：2025/7/24
-//更改记录：
-//----------------------------------------------------------------------------------------------------------
+//定义存放信息的结构体
 
 typedef struct NeuroContainer       //定义结构体存放Neuro的信息
 {
@@ -48,15 +42,42 @@ typedef struct LayerContainer       //定义结构体存放层的信息
     unsigned int EndNeuro;          //此层中神经元最大索引号
 };
 
+//----------------------------------------------------------------------------------------------------------
+//类名：Importer
+//功能：作为所有导入器类的母类
+//接口： 待编写
+//开发者：Jason Cheng   日期：2025/7/24
+//更改记录：
+//----------------------------------------------------------------------------------------------------------
+
 class Importer
 {
     public:
+        //构造函数
+        Importer(const char* SetFileName = "");
+        //赋值运算符
+        Importer& operator=(const Importer& Source);
+        //拷贝构造函数
+        Importer(const Importer& Source);
+        //析构函数
+        ~Importer();
+
+        //导入文件路径（Setter）
+        void ImportFile(const char* SetFileName);
+        //清除文件路径(Setter)
+        void clear();
+        //展示文件路径（Getter）
+        const char* GetFileName() const;
+        //判断文件是否合法的纯虚函数
+        virtual bool IsValid() = 0;
         //文件读取器的纯虚函数
-        virtual void ImportFile(const char* FileNamePath, 
-                                std::vector<NeuroContainer> MyNeuroVector,
-                                std::set<SynapseContainer>  MySynapseSet,
-                                std::vector<LayerContainer> MyLayerVector,
+        virtual void ReadFile(const char* FileNamePath, 
+                                std::vector<NeuroContainer>& MyNeuroVector,
+                                std::set<SynapseContainer>&  MySynapseSet,
+                                std::vector<LayerContainer>& MyLayerVector,
                                 char* NetworkName) = 0; 
+    protected:
+        char m_FileNamePath[100];
 };
 
 #endif /*IMPORTER_HPP*/
