@@ -25,11 +25,32 @@
 class ANNImporter: public Importer
 {
     public:
-        virtual void ImportFile(const char* FileNamePath, 
-                                std::vector<NeuroContainer> MyNeuroVector,
-                                std::set<SynapseContainer>  MySynapseSet,
-                                std::vector<LayerContainer> MyLayerVector,
-                                char* NetworkName) override;
+        //构造函数，输入文件路径
+        ANNImporter(const char* SetFileName = "");
+        //赋值运算符重载
+        ANNImporter& operator=(const ANNImporter& Source);
+        //拷贝构造函数
+        ANNImporter(const ANNImporter& Source);
+        //析构函数
+        ~ANNImporter();
+
+        /*
+            Importer中已定义:
+            *   void Importfile(const char* FileName);
+            *   void clear();
+            *   const char* GetFileName() const;
+        */
+        //判断文件是否合法
+        virtual bool IsValid() const override;
+        //判断文件是否合法，并查看路径中的.ANN文件中神经元、层的数量
+        virtual bool IsValid(int& NumOfNeuros, int& NumOfLayers) const;
+        //导入文件
+        virtual void ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
+                              std::set<SynapseContainer>&  MySynapseSet,
+                              std::vector<LayerContainer>& MyLayerVector,
+                              char* NetworkName                             ) override;
+    private:
+        //已在Importer类中声明保护对象char FileNamePath[100];
 };
 
 

@@ -7,6 +7,8 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <vector>
+#include <set>
 
 #include "Importer.hpp"
 

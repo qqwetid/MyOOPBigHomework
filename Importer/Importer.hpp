@@ -10,24 +10,24 @@
 
 //定义存放信息的结构体
 
-typedef struct NeuroContainer       //定义结构体存放Neuro的信息
+struct NeuroContainer       //定义结构体存放Neuro的信息
 {
     double Bias;                    //偏置
     int NumOfActvtnFctn;            //激活函数序号
 };
 
-typedef struct SynapseContainer     //定义结构体存放树突Synapse信息
+struct SynapseContainer     //定义结构体存放树突Synapse信息
 {
     int CnnctNeuro;                 //树突前端连接的神经元编号
     int LyingNeuro;                 //树突所在神经元编号
     double Weight;                  //树突的权重
 
-    bool operator<(SynapseContainer& Source) {          //为了放在set中，需要定义比较大小的函数
-        if (LyingNeuro != Source.LyingNeuro) {
-            return (LyingNeuro < Source.LyingNeuro);    //优先比较所在神经元的序号大小
+    bool operator<(const SynapseContainer& Source) const {          //为了放在set中，需要定义比较大小的函数
+        if (CnnctNeuro != Source.CnnctNeuro) {
+            return (CnnctNeuro< Source.CnnctNeuro);    //优先比较所在神经元的序号大小
         }
-        else if (CnnctNeuro != Source.CnnctNeuro) {
-            return (CnnctNeuro < Source.CnnctNeuro);    //再比较连接的神经元的序号大小
+        else if (LyingNeuro != Source.LyingNeuro) {
+            return (LyingNeuro < Source.LyingNeuro);    //再比较连接的神经元的序号大小
         }
         else {
             return false;                               //如果两个神经元都相同，就认为两个树突一样，不允许同时出现
@@ -36,7 +36,7 @@ typedef struct SynapseContainer     //定义结构体存放树突Synapse信息
 
 };
 
-typedef struct LayerContainer       //定义结构体存放层的信息
+struct LayerContainer       //定义结构体存放层的信息
 {
     unsigned int StartNeuro;        //此层中神经元最小索引号
     unsigned int EndNeuro;          //此层中神经元最大索引号
@@ -69,13 +69,12 @@ class Importer
         //展示文件路径（Getter）
         const char* GetFileName() const;
         //判断文件是否合法的纯虚函数
-        virtual bool IsValid() = 0;
+        virtual bool IsValid() const = 0;
         //文件读取器的纯虚函数
-        virtual void ReadFile(const char* FileNamePath, 
-                                std::vector<NeuroContainer>& MyNeuroVector,
-                                std::set<SynapseContainer>&  MySynapseSet,
-                                std::vector<LayerContainer>& MyLayerVector,
-                                char* NetworkName) = 0; 
+        virtual void ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
+                              std::set<SynapseContainer>&  MySynapseSet,
+                              std::vector<LayerContainer>& MyLayerVector,
+                              char* NetworkName) = 0; 
     protected:
         char m_FileNamePath[100];
 };
