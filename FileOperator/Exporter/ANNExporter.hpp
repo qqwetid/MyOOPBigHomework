@@ -37,10 +37,10 @@ class ANNExporter: public Exporter
             *   void clear();
             *   const char* GetFileName() const;
         */
+        //判断要写入的是不是.ANN文件
+        bool IsANNFile() const;
         //判断文件是否合法
         virtual bool IsValid() const override;
-        //判断文件是否合法，并查看路径中的.ANN文件中神经元、层的数量
-        virtual bool IsValid(int& NumOfNeuros, int& NumOfLayers) const;
         //导出文件
         virtual void OutputFile(const std::vector<NeuroContainer>& MyNeuroVector,
                                 const std::set<SynapseContainer>&  MySynapseSet,

@@ -244,6 +244,7 @@ void ANNImporter::ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
         std::ostringstream Stream;
         Stream << "Error: Failed to open a file from \"" << m_FileNamePath << "\".";
         throw std::invalid_argument(Stream.str());
+        exit(1);
     }
 
     //先将Vector扩到合适的大小

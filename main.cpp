@@ -54,5 +54,7 @@ int main() {
     {
         std::cerr << e.what() << '\n';
     }
+    ANNExporter MyFileExporter("../../Code/CPP/MyOOPBigHomework/ANNFiles/testANNExporter.ANN");
+    MyFileExporter.OutputFile(MyNeuroVector, MySynapseSet, MyLayerVector, "MyFirstNetwork");
     return 0;
 }
