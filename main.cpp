@@ -11,8 +11,11 @@
 #include "./Network/Neuro.hpp"                  //导入Neuro类的声明
 #include "./Network/Layer.hpp"                  //导入Layer类的声明
 #include "./Network/Network.hpp"                //导入Network类的声明
-#include "./Importer/Importer.hpp"              //导入Importer类的声明
-#include "./Importer/ANNImporter.hpp"           //导入ANNImporter类的声明
+#include "./FileOperator/Container/NeuroContainer.hpp"
+#include "./FileOperator/Container/LayerContainer.hpp"
+#include "./FileOperator/Container/SynapseContainer.hpp"
+#include "./FileOperator/Importer/Importer.hpp"              //导入Importer类的声明
+#include "./FileOperator/Importer/ANNImporter.hpp"           //导入ANNImporter类的声明
 
 
 
@@ -32,17 +35,17 @@ int main() {
         std::set<SynapseContainer>::iterator iter_Synapse = MySynapseSet.begin();
         std::cout << "Neuros:" << std::endl;
         while (iter_Neuro != MyNeuroVector.end()) {
-            std::cout << "(" << iter_Neuro->Bias << ", " << iter_Neuro->NumOfActvtnFctn << ")" << std::endl;
+            std::cout << iter_Neuro->ToString() << std::endl;
             iter_Neuro++;
         }
         std::cout << "Layers:" << std::endl;
         while (iter_Layer != MyLayerVector.end()) {
-            std::cout << "(" << iter_Layer->StartNeuro << ", " << iter_Layer->EndNeuro << ")" << std::endl;
+            std::cout << iter_Layer->ToString() << std::endl;
             iter_Layer++;
         }
         std::cout << "Synapses:" << std::endl;
         while (iter_Synapse != MySynapseSet.end()) {
-            std::cout << "(" << iter_Synapse->CnnctNeuro << ", " << iter_Synapse->LyingNeuro << ", " << iter_Synapse->Weight << ")" << std::endl;
+            std::cout << iter_Synapse->ToString() << std::endl;
             iter_Synapse++;
         }
     }

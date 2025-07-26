@@ -7,8 +7,9 @@
             "args": [
                 "-g",
                 "${workspaceFolder}\\*.cpp",
-                "${workspaceFolder}\\Network\\*.cpp",       //添加文件夹Network到路径
-                "${workspaceFolder}\\Importer\\*.cpp",      //添加文件夹Importer到路径
+                "${workspaceFolder}\\Network\\*.cpp",                   //添加文件夹Network到路径
+                "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
+                "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
                 "-o",
                 "${workspaceFolder}/${workspaceRootFolderName}.exe"
             ],
@@ -37,8 +38,9 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "${workspaceFolder}\\*.cpp",
-                "${workspaceFolder}\\Network\\*.cpp",     //添加文件夹Network到路径
-                "${workspaceFolder}\\Importer\\*.cpp",      //添加文件夹Importer到路径
+                "${workspaceFolder}\\Network\\*.cpp",                   //添加文件夹Network到路径
+                "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
+                "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
                 "-o",
                 "${workspaceFolder}\\${workspaceRootFolderName}.exe"
             ],
