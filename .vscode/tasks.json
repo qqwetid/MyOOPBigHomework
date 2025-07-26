@@ -10,6 +10,7 @@
                 "${workspaceFolder}\\Network\\*.cpp",                   //添加文件夹Network到路径
                 "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
                 "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
+                "${workspaceFolder}\\FileOperator\\Exporter\\*.cpp",    //添加文件夹Exporter到路径
                 "-o",
                 "${workspaceFolder}/${workspaceRootFolderName}.exe"
             ],
@@ -41,6 +42,7 @@
                 "${workspaceFolder}\\Network\\*.cpp",                   //添加文件夹Network到路径
                 "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
                 "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
+                "${workspaceFolder}\\FileOperator\\Exporter\\*.cpp",    //添加文件夹Exporter到路径
                 "-o",
                 "${workspaceFolder}\\${workspaceRootFolderName}.exe"
             ],

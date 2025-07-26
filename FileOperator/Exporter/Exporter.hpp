@@ -1,16 +1,19 @@
 //----------------------------------------------------------------------------------------------------------
-//Importer.hpp
-//功能模块：Importer类；目的：作为所有导入器类的基类
-//开发者：Jason Cheng   日期：2025/7/24
+//Exporter.hpp
+//功能模块：Exporter类；目的：作为所有导出器类的基类
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录：
 //----------------------------------------------------------------------------------------------------------
 
-#ifndef IMPORTER_HPP
-#define IMPORTER_HPP
+#ifndef EXPORTER_HPP
+#define EXPORTER_HPP
+
+#include <vector>
+#include <set>
 
 //----------------------------------------------------------------------------------------------------------
-//类名：Importer
-//功能：作为所有导入器类的母类
+//类名：Exporter
+//功能：作为所有导出器类的母类
 //接口： 
 /*
     *   //导入文件路径（Setter）
@@ -22,26 +25,26 @@
     *   //判断文件是否合法的纯虚函数
     *   virtual bool IsValid() const = 0;
     *   //文件读取器的纯虚函数
-    *   virtual void ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
-    *                         std::set<SynapseContainer>&  MySynapseSet,
-    *                         std::vector<LayerContainer>& MyLayerVector,
-    *                         char* NetworkName) = 0; 
+    *   virtual void OutputFile(const std::vector<NeuroContainer>& MyNeuroVector,
+    *                           const std::set<SynapseContainer>&  MySynapseSet,
+    *                           const std::vector<LayerContainer>& MyLayerVector,
+    *                           const char* NetworkName) = 0; 
 */
-//开发者：Jason Cheng   日期：2025/7/24
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录：
 //----------------------------------------------------------------------------------------------------------
 
-class Importer
+class Exporter
 {
     public:
         //构造函数
-        Importer(const char* SetFileName = "");
+        Exporter(const char* SetFileName = "");
         //赋值运算符
-        Importer& operator=(const Importer& Source);
+        Exporter& operator=(const Exporter& Source);
         //拷贝构造函数
-        Importer(const Importer& Source);
+        Exporter(const Exporter& Source);
         //析构函数
-        ~Importer();
+        ~Exporter();
 
         //导入文件路径（Setter）
         void AddPath(const char* SetFileName);
@@ -52,12 +55,12 @@ class Importer
         //判断文件是否合法的纯虚函数
         virtual bool IsValid() const = 0;
         //文件读取器的纯虚函数
-        virtual void ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
-                              std::set<SynapseContainer>&  MySynapseSet,
-                              std::vector<LayerContainer>& MyLayerVector,
-                              char* NetworkName) = 0; 
+        virtual void OutputFile(const std::vector<NeuroContainer>& MyNeuroVector,
+                                const std::set<SynapseContainer>&  MySynapseSet,
+                                const std::vector<LayerContainer>& MyLayerVector,
+                                const char* NetworkName) = 0; 
     protected:
         char m_FileNamePath[100];
 };
 
-#endif /*IMPORTER_HPP*/
+#endif /*EXPORTER_HPP*/

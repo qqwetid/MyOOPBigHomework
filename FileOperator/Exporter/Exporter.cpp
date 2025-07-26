@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------------
-//Importer.cpp
-//功能模块：Importer类的成员函数；目的：定义Importer类的成员函数
-//开发者：Jason Cheng   日期：2025/7/25
+//Exporter.cpp
+//功能模块：Exporter类的成员函数；目的：定义Exporter类的成员函数
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录：
 //----------------------------------------------------------------------------------------------------------
 
@@ -13,18 +13,18 @@
 #include "../Container/NeuroContainer.hpp"
 #include "../Container/LayerContainer.hpp"
 #include "../Container/SynapseContainer.hpp"
-#include "Importer.hpp"
+#include "Exporter.hpp"
 
 //----------------------------------------------------------------------------------------------------------
-//函数名称：Importer（构造函数）
-//函数功能：构造一个Importer类对象
+//函数名称：Exporter（构造函数）
+//函数功能：构造一个Exporter类对象
 //参数：const char* SetFileName = 0 输入参数
 //返回值：无
-//开发者：Jason Cheng   日期：2025/7/25
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-Importer::Importer(const char* SetFileName) {
+Exporter::Exporter(const char* SetFileName) {
     if(strlen(SetFileName) >= 100)                  //如果文件名过长，throw错误信息
     {
         throw std::invalid_argument("Error: Your File Path is too long!");
@@ -35,40 +35,40 @@ Importer::Importer(const char* SetFileName) {
 //----------------------------------------------------------------------------------------------------------
 //函数名称：operator=
 //函数功能：实现赋值运算符的重载
-//参数：const Importer& Source  输入参数
-//返回值：Importer&
-//开发者：Jason Cheng   日期：2025/7/25
+//参数：const Exporter& Source  输入参数
+//返回值：Exporter&
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-Importer& Importer::operator=(const Importer& Source) {
+Exporter& Exporter::operator=(const Exporter& Source) {
     strcpy_s(this->m_FileNamePath, 99, Source.m_FileNamePath);
     return *this;
 }
 
 //----------------------------------------------------------------------------------------------------------
-//函数名称：Importer（构造函数）
-//函数功能：构造一个Importer类对象
-//参数：const Importer& Source  输入参数
+//函数名称：Exporter（构造函数）
+//函数功能：构造一个Exporter类对象
+//参数：const Exporter& Source  输入参数
 //返回值：无
-//开发者：Jason Cheng   日期：2025/7/25
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-Importer::Importer(const Importer& Source) {
+Exporter::Exporter(const Exporter& Source) {
     strcpy_s(this->m_FileNamePath, 99, Source.m_FileNamePath);
 }
 
 //----------------------------------------------------------------------------------------------------------
-//函数名称：~Importer（析构函数）
-//函数功能：析构一个Importer类对象
+//函数名称：~Exporter（析构函数）
+//函数功能：析构一个Exporter类对象
 //参数：无
 //返回值：无
-//开发者：Jason Cheng   日期：2025/7/25
+//开发者：Jason Cheng   日期：2025/7/26
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-Importer::~Importer() {
+Exporter::~Exporter() {
     //空函数体
 }
 
@@ -81,7 +81,7 @@ Importer::~Importer() {
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-void Importer::AddPath(const char* SetFileName) {
+void Exporter::AddPath(const char* SetFileName) {
     //和构造函数作用相同
     if(strlen(SetFileName) >= 100)                  //如果文件名过长，throw错误信息
     {
@@ -99,7 +99,7 @@ void Importer::AddPath(const char* SetFileName) {
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-void Importer::clear() {
+void Exporter::clear() {
     strcpy_s(this->m_FileNamePath, 100, "");
 }
 
@@ -112,6 +112,6 @@ void Importer::clear() {
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 
-const char* Importer::GetFileName() const {
+const char* Exporter::GetFileName() const {
     return m_FileNamePath;
 }
