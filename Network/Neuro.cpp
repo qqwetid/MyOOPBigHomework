@@ -5,6 +5,7 @@
 //更改记录      2025/7/20 添加神经元编号后对相应函数进行了一些修改。具体见函数注释
 //              2025/7/21 更改了一些函数名。具体见函数注释
 //              2025/7/23 增加了Signal函数带参数的重载
+//              2025/7/28 增加了HasDndrtCnnct函数，并为InsertDendrite函数增加了判断工作
 //----------------------------------------------------------------------------------------------------------
 
 #include "ActivationFunction.hpp"   //导入激活函数类
@@ -162,6 +163,26 @@ unsigned int Neuro::GetNeuroCount() {
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：HasDndrtCnnct
+//函数功能：获取当前神经元的数量
+//参数：const Neuro* SourceNeuro
+//返回值：bool
+//开发者：Jason Cheng   日期：2025/7/21
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+bool Neuro::HasDndrtCnnct(const Neuro* SourceNeuro) const {
+    MyDndrtType::const_iterator const_iter_Dndrts = m_MyDendrites.begin();
+    while (const_iter_Dndrts != m_MyDendrites.end()) {          //对树突循环，寻找是否有树突连接相同的神经元
+        if (const_iter_Dndrts->GetNeuro() == SourceNeuro) {     //如果有树突连接相同的神经元，返回ture
+            return true;
+        }
+        const_iter_Dndrts++;
+    }
+    return false;                                               //如果找不到连接相同神经元你的树突，返回false
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：SetSoma
 //函数功能：获取Soma成员，可以调用其Setter进行修改
 //参数：无
@@ -233,10 +254,20 @@ void Neuro::SetID(unsigned int ID_set) {
 //返回值：无
 //开发者：Jason Cheng   日期：2025/7/19
 //更改记录      2025/7/21 将函数名从AddDendrite改为InsertDendrite
+//              2025/7/28 添加树突前增加了是否指向同一个神经元的判断，如果指向同一个神经元则throw错误信息
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::InsertADendrite(const Dendrite& Source) {
-    m_MyDendrites.push_back(Source);    //将Source拷贝到vector的末尾
+    if (Source.GetNeuro() != nullptr) {                                 //检查连接的神经元是否是空的，如果不是空的就要判断是否已经有连接相同神经元的树突
+        if (HasDndrtCnnct(Source.GetNeuro())) {                         //如果有相同神经元，throw错误信息
+            std::ostringstream Stream;
+            Stream << "Error: Failed to insert this Dendrite." << std::endl;
+            Stream << "\tThere is already a dendrite connecting with a same neuron.";
+            throw std::invalid_argument(Stream.str());
+        }
+    }
+    //如果检查没有问题，则把树突加入神经元的树突
+    m_MyDendrites.push_back(Source);                                    //将Source拷贝到vector的末尾
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -249,6 +280,14 @@ void Neuro::InsertADendrite(const Dendrite& Source) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::InsertADendrite(double Weight_set, Neuro* pConnectedNeuro_set) {
+    if (pConnectedNeuro_set != nullptr) {                                 //检查连接的神经元是否是空的，如果不是空的就要判断是否已经有连接相同神经元的树突
+        if (HasDndrtCnnct(pConnectedNeuro_set)) {                         //如果有相同神经元，throw错误信息
+            std::ostringstream Stream;
+            Stream << "Error: Failed to insert this Dendrite." << std::endl;
+            Stream << "\tThere is already a dendrite connecting with a same neuron.";
+            throw std::invalid_argument(Stream.str());
+        }
+    }
     Dendrite d1(Weight_set, pConnectedNeuro_set);       //建立一个临时的d1对象，存储输入的信息
     m_MyDendrites.push_back(d1);                        //将d1的信息拷贝到m_MyDendrites
     //d1的空间在函数结束后释放

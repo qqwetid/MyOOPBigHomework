@@ -22,6 +22,7 @@ typedef std::vector<Dendrite> MyDndrtType;
 //更改记录：    2025/7/21   添加删除树突的函数
 //              2025/7/21   将AddDendrite的函数名修改为InsertDendrite
 //              2025/7/23   增加了Signal函数带参数的重载
+//              2025/7/28   增加了HadDndrtCnnct函数判断是否有树突重复
 //----------------------------------------------------------------------------------------------------------
 
 class Neuro
@@ -50,6 +51,9 @@ class Neuro
         const double& SignalNow {m_rSignalNow};         //获取当前存储的信号
         const unsigned int& NeuroID {m_uNeuroID};       //获取神经元的ID
         static unsigned int GetNeuroCount();            //获取神经元的数量
+
+        //判断该神经元中是否有树突指向某个神经元
+        bool HasDndrtCnnct(const Neuro* SourceNeuro) const;
 
         //Setters
         //获取神经元的细胞体，可以修改
