@@ -598,6 +598,74 @@ void Network::CnnctNursByDndrt(double WeightToSet,
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：CnnctNursByDndrt
+//函数功能：只用神经元编号的索引为两层神经元创造突触连接（适用于神经网络内神经元序号没有重复的情况）
+//参数： 
+/*
+        int FirstNeuro      输入参数
+        int SecondNeuro     输入参数
+        double Weight       输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/29
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
+    if (FirstNeuro < -1) {              //排除神经元索引值错误的情形
+        throw std::invalid_argument("Error: Your FirstNeuro is invalid (less than -1)!");
+        exit(1);
+    }
+    if (SecondNeuro < -1) {             //排除神经元索引值错误的情形
+        throw std::invalid_argument("Error: Your SecondNeuro is invalid (less than -1)!");
+        exit(1);
+    }
+    if (FirstNeuro != -1 && QueryNeuro(FirstNeuro) == nullptr) {   //如果找不到第一个神经元，throw错误信息
+        throw std::invalid_argument("Error: Cannot find your first neuron.");
+        exit(1);
+    }
+    if (SecondNeuro != -1 && QueryNeuro(SecondNeuro) == nullptr) {   //如果找不到第一个神经元，throw错误信息
+        throw std::invalid_argument("Error: Cannot find your second neuron.");
+        exit(1);
+    }
+    if (FirstNeuro == -1) {             //考虑第一个值是-1的情形
+        if (SecondNeuro == -1) {        //排除两个值都为-1的情形
+            throw std::invalid_argument("Error: Your Synapse is invalid (two sides are all nullptr)!");
+            exit(1);
+        }
+        Neuro* pLyingNeuro = QueryNeuro(SecondNeuro);
+        if (pLyingNeuro->HasDndrtCnnct(nullptr) == true) {  //如果该神经元已经有指向空指针的树突，则throw错误信息
+            throw std::invalid_argument("Error: Your second neuron already has a Synapse connecting with nullptr.");
+            exit(1);
+        }
+        else {                          //如果该神经元没有指向空指针的树突，则添加
+            pLyingNeuro->InsertADendrite(Weight, nullptr);
+        }
+    }
+    else if (SecondNeuro == -1) {       //考虑第二个值是-1的情形
+        Neuro* pLyingNeuro = QueryNeuro(FirstNeuro);
+        if (pLyingNeuro->HasDndrtCnnct(nullptr) == true) {  //如果该神经元已经有指向空指针的树突，则throw错误信息
+            throw std::invalid_argument("Error: Your first neuron already has a Synapse connecting with nullptr.");
+            exit(1);
+        }
+        else {                          //如果该神经元没有指向空指针的树突，则添加
+            pLyingNeuro->InsertADendrite(Weight, nullptr);
+        }
+    }
+    else {                              //考虑两个值都不是-1的情形
+        Neuro* pLyingNeuro = QueryNeuro(FirstNeuro);
+        Neuro* pCnnctNeuro = QueryNeuro(SecondNeuro);
+        if (pLyingNeuro->HasDndrtCnnct(pCnnctNeuro) == true) {  //如果该神经元已经有指向第一个神经元的树突，则throw错误信息
+            throw std::invalid_argument("Error: Your second neuron already has a Synapse connecting with your first neuron.");
+            exit(1);
+        }
+        else {                          //如果第二个神经元没指向第一个神经元的树突，则连接树突
+            pLyingNeuro->InsertADendrite(Weight, pCnnctNeuro);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：DeleteLayer
 //函数功能：删除一层以及其所有突触连接
 //参数： 

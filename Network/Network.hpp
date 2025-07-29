@@ -79,6 +79,8 @@ class Network
         void InsertLayer(Layer& SourceLayer, unsigned int LayerNumber);
         //为两层的神经元创造突触连接
         void CnnctNursByDndrt(double WeightToSet, unsigned int CnnctLayerID, unsigned int CnnctNeuroID, unsigned int LyingLayerID, unsigned int LyingNeuroID);
+        //只用神经元编号的索引为两层神经元创造突触连接（适用于神经网络内神经元序号没有重复的情况）
+        void CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight);
         //删除一层以及与其有关的所有突出连接
         void DeleteLayer(unsigned int LayerIDToDelete);
         //删除两神经元间的突触连接
