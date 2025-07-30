@@ -299,6 +299,8 @@ void ANNImporter::ReadFile(std::vector<NeuroContainer>& MyNeuroVector,
             }
             case 'G' : {
                 std::getline(InFile, ThisRow);          //将文件名存到ThisRow中
+                std::string::iterator iter_str = ThisRow.begin();
+                ThisRow.erase(iter_str, iter_str + 1);
                 if (ThisRow.size() >= 40)               //如果文件名过长，返回警告信息，并裁掉多余部分
                 {
                     std::cout << "Warning: Your Network name will be cut since it is to long." << std::endl;

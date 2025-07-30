@@ -11,6 +11,7 @@
                 "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
                 "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
                 "${workspaceFolder}\\FileOperator\\Exporter\\*.cpp",    //添加文件夹Exporter到路径
+                "${workspaceFolder}\\Controler\\*.cpp",                 //添加文件夹Controler到路径
                 "-o",
                 "${workspaceFolder}/${workspaceRootFolderName}.exe"
             ],
@@ -43,6 +44,7 @@
                 "${workspaceFolder}\\FileOperator\\Container\\*.cpp",   //添加文件夹Container到路径
                 "${workspaceFolder}\\FileOperator\\Importer\\*.cpp",    //添加文件夹Importer到路径
                 "${workspaceFolder}\\FileOperator\\Exporter\\*.cpp",    //添加文件夹Exporter到路径
+                "${workspaceFolder}\\Controler\\*.cpp",                 //添加文件夹Controler到路径
                 "-o",
                 "${workspaceFolder}\\${workspaceRootFolderName}.exe"
             ],

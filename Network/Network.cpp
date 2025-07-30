@@ -473,6 +473,25 @@ unsigned int Network::GetNumberOfLayers() const {
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：GetNumberOfNeuros
+//函数功能：获取神经元的数量
+//参数： 无
+//返回值：unsigned int
+//开发者：Jason Cheng   日期：2025/7/30
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+unsigned int Network::GetNumberOfNeuros() const {
+    MyLayersType::const_iterator const_iter_Layers = m_MyLayers.begin();
+    unsigned int NumberOfNeuros = 0;
+    while (const_iter_Layers != m_MyLayers.end()) {
+        NumberOfNeuros += (const_iter_Layers->GetMyNeuros()).size();
+        const_iter_Layers++;
+    }
+    return NumberOfNeuros;
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：QueryLayer
 //函数功能：根据编号查找层
 //参数： unsigned int NumberInput
@@ -787,11 +806,23 @@ std::string Network::ToString_brief() const {
     std::ostringstream Stream;
     Stream << "**Network**" << std::endl;
     Stream << "NetworkName:\n\t__" << m_cNetworkName << "__" << std::endl;
+
     MyLayersType::const_iterator const_iter_Layers = m_MyLayers.begin();
     while (const_iter_Layers != m_MyLayers.end()) {
-        Stream << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Layers in Network $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
-        Stream << "Layer Number: " << const_iter_Layers - m_MyLayers.begin() << std::endl;
-        Stream << const_iter_Layers->ToString_brief();
+        const Layer& ThisLayer = *const_iter_Layers;
+        Stream << std::endl;
+        Stream << "================================== Layers in Network ==================================" << std::endl;
+        Stream << std::endl;
+        Stream << "Layer Number: \t\t" << const_iter_Layers - m_MyLayers.begin() << std::endl;
+        Stream << "Number of Neuros: \t" << ThisLayer.GetMyNeuros().size() << std::endl;
+        Stream << "All Neuros in this Layer: \n\t";
+        MyNeurosType::const_iterator const_iter_Neuros = ThisLayer.GetMyNeuros().begin();
+        while (const_iter_Neuros != ThisLayer.GetMyNeuros().end()) {    //对神经元循环输出神经元
+            const Neuro& ThisNeuro = const_iter_Neuros->second;
+            Stream << ThisNeuro.NeuroID << ", ";
+            const_iter_Neuros++;
+        }
+        Stream << std::endl;
         const_iter_Layers++;
     }
     return Stream.str();

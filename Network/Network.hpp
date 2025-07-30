@@ -61,10 +61,14 @@ class Network
         void Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve);
         
         //Getters
+        //获取神经网络名称
+        const char* NetworkName {m_cNetworkName};
         //获取存储层的容器（不可修改）
         const MyLayersType& MyLayers {m_MyLayers};
         //获取层数
         unsigned int GetNumberOfLayers() const;
+        //获取神经元的数量
+        unsigned int GetNumberOfNeuros() const;
         //根据编号查找层
         Layer* QueryLayer(unsigned int NumberInput);
         //根据编号查找神经元

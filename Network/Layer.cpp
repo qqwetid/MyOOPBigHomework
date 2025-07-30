@@ -207,7 +207,7 @@ Neuro* Layer::Query(unsigned int ID_input) {
         MyNeurosType::iterator iter = m_MyNeuros.find(ID_input);    //查找序号为ID_input的神经元
         if (iter == m_MyNeuros.end())                               //若没找到，则返回空指针
         {
-            throw std::invalid_argument("Error: Cannot find such Neuro.\n\tThe function will return `nullptr'");
+            //throw std::invalid_argument("Error: Cannot find such Neuro.\n\tThe function will return `nullptr'");
             return nullptr;
         }
         else                                                        //若找到，则返回神经元对应的指针

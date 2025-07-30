@@ -18,10 +18,31 @@
 #include "./FileOperator/Importer/ANNImporter.hpp"          //导入ANNImporter类的声明
 #include "./FileOperator/Exporter/Exporter.hpp"             //导入Exporter类的声明
 #include "./FileOperator/Exporter/ANNExporter.hpp"          //导入ANNExporter类的声明
+#include "./Controler/Controler.hpp"                        //导入Controler类的声明
 
 
 
 int main() {
+    try
+    {
+        Controler* pMyControler = Controler::GetInstance();
+        Network* pMyNetwork = pMyControler->ImportNetwork("../../Code/CPP/MyOOPBigHomework/ANNFiles/simple.ANN");
+        if (pMyNetwork != nullptr)
+        {
+            pMyControler->ShowNetwork(*pMyNetwork);
+        }
+        pMyControler->DeleteLayer(*pMyNetwork, 0);
+        pMyControler->ShowNetwork(*pMyNetwork);
+        pMyControler->ExportNetwork(*pMyNetwork, "../../Code/CPP/MyOOPBigHomework/ANNFiles/testControler.ANN");
+    delete pMyControler;
+    delete pMyNetwork;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+    /*
     std::cout << "Hello World" << std::endl;
     ANNImporter MyFileImporter("../../Code/CPP/MyOOPBigHomework/ANNFiles/simple.ANN");
     std::vector<NeuroContainer> MyNeuroVector;
@@ -31,6 +52,7 @@ int main() {
     try
     {
         MyFileImporter.ReadFile(MyNeuroVector, MySynapseSet, MyLayerVector, MyNetworkName);
+        
         std::vector<NeuroContainer>::iterator iter_Neuro = MyNeuroVector.begin();
         std::vector<LayerContainer>::iterator iter_Layer = MyLayerVector.begin();
         std::set<SynapseContainer>::iterator iter_Synapse = MySynapseSet.begin();
@@ -49,12 +71,30 @@ int main() {
             std::cout << iter_Synapse->ToString() << std::endl;
             iter_Synapse++;
         }
+        
     }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
     }
+    
     ANNExporter MyFileExporter("../../Code/CPP/MyOOPBigHomework/ANNFiles/testANNExporter.ANN");
     MyFileExporter.OutputFile(MyNeuroVector, MySynapseSet, MyLayerVector, "MyFirstNetwork");
+    
+    std::cout << "====================================================================" << std::endl;
+    Controler* MyControler = Controler::GetInstance();
+    try
+    {
+        Network* MyNetwork = MyControler->ImportNetwork(MyNeuroVector, MySynapseSet, MyLayerVector, MyNetworkName);
+        std::cout << MyNetwork->ToString_brief() << std::endl;
+        delete MyControler;
+        delete MyNetwork;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        delete MyControler;
+    }
+    */
     return 0;
 }

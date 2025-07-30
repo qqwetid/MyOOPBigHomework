@@ -11,6 +11,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <limits>
+#include <vector>
+#include <set>
 
 #include "../Network/ActivationFunction.hpp"                //导入激活函数类
 #include "../Network/Soma.hpp"                              //导入细胞体Soma类
@@ -137,6 +139,8 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
         const_iter_SynpsSet++;
     }
     std::cout << "Your Network " << NetworkName << " has been imported successfully!" << std::endl;
+    std::cout << std::endl;
+    return pMyNetwork;
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -152,5 +156,140 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
 //----------------------------------------------------------------------------------------------------------
 
 Network* Controler::ImportNetwork(const char* FilePath) const {
-    
+    ANNImporter ImportANNFile(FilePath);
+    std::vector<NeuroContainer> MyNeuroVector;
+    std::set<SynapseContainer>  MySynapseSet;
+    std::vector<LayerContainer> MyLayerVector;
+    char NetworkName[40];
+    ImportANNFile.ReadFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+    Network* pMyNetwork = ImportNetwork(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+    return pMyNetwork;
 }
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ExportNetwork
+//函数功能：根据网络导出存储网络的容器
+//参数：
+/*
+    *   const Network& SourceNetwork                输入参数
+    *   std::vector<NeuroContainer>& MyNeuroVector  输出参数
+    *   std::set<SynapseContainer>&  MySynapseSet   输出参数
+    *   std::vector<LayerContainer>& MyLayerVector  输出参数
+    *   char* NetworkName                           输出参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/30
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::ExportNetwork(const Network& SourceNetwork,
+                              std::vector<NeuroContainer>& MyNeuroVector,
+                              std::set<SynapseContainer>&  MySynapseSet,
+                              std::vector<LayerContainer>& MyLayerVector,
+                              char* NetworkName) const
+{
+    strcpy_s(NetworkName, 40, SourceNetwork.NetworkName);               //获取神经网络的名称
+    MyNeuroVector.clear();
+    MyNeuroVector.reserve(SourceNetwork.GetNumberOfNeuros());
+    MySynapseSet.clear();
+    MyLayerVector.clear();
+    MyLayerVector.reserve(SourceNetwork.GetNumberOfLayers());
+
+    /*填充容器*/
+    MyLayersType::const_iterator const_iter_Layers = SourceNetwork.MyLayers.begin();
+    while (const_iter_Layers != SourceNetwork.MyLayers.end()) {         //对层循环
+        const Layer& ThisLayer = *const_iter_Layers;
+        /*填充层的容器*/
+        LayerContainer ThisLyrCntnr(const_iter_Layers->GetMyNeuros().begin()->first, const_iter_Layers->GetMyNeuros().rbegin()->first);
+        MyLayerVector.push_back(ThisLyrCntnr);
+
+        MyNeurosType::const_iterator const_iter_Neuros = ThisLayer.GetMyNeuros().begin();
+        while (const_iter_Neuros != ThisLayer.GetMyNeuros().end()) {    //对神经元循环
+            const Neuro& ThisNeuro = const_iter_Neuros->second;
+            /*填充神经元的容器*/
+            NeuroContainer ThisNrCntnr(ThisNeuro.MySoma.GetBias(), ThisNeuro.MySoma.GetActvtnFunc());
+            MyNeuroVector.push_back(ThisNrCntnr);
+
+            /*填充突触的容器（树突）*/
+            MyDndrtType::const_iterator const_iter_Dndrts = ThisNeuro.MyDendrites.begin();
+            while (const_iter_Dndrts != ThisNeuro.MyDendrites.end()) {
+                const Dendrite& ThisDendrite = *const_iter_Dndrts;
+                SynapseContainer ThisDndrtCntnr(-1, ThisNeuro.NeuroID, ThisDendrite.GetWeight());
+                if (ThisDendrite.GetNeuro() != nullptr) {
+                    ThisDndrtCntnr.SetCnnctNeuro(ThisDendrite.GetNeuro()->NeuroID);
+                }
+                MySynapseSet.insert(ThisDndrtCntnr);
+                const_iter_Dndrts++;
+            }
+            /*填充突触的容器（轴突）*/
+            if (const_iter_Layers == (SourceNetwork.MyLayers.end() - 1)) {  //如果在最后一行，就加入轴突
+                SynapseContainer ThisAxonCntnr(ThisNeuro.NeuroID, -1, 1.0);
+                MySynapseSet.insert(ThisAxonCntnr);
+            }
+            const_iter_Neuros++;
+        }
+
+        const_iter_Layers++;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ExportNetwork
+//函数功能：根据网络导出.ANN文件
+//参数：
+/*
+    *   const Network& SourceNetwork        输入参数
+    *   const char* FilePath                输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/30
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::ExportNetwork(const Network& SourceNetwork, const char* FilePath) const {
+    std::vector<NeuroContainer> MyNeuroVector;
+    std::set<SynapseContainer>  MySynapseSet;
+    std::vector<LayerContainer> MyLayerVector;
+    char NetworkName[40];
+    //将网络导出到容器
+    ExportNetwork(SourceNetwork, MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+    //将容器导出到文件
+    ANNExporter OutFile(FilePath);
+    OutFile.OutputFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：ShowNetwork
+//函数功能：列出所有Layer对象，显示其序号和内部神经元的数量、序号
+//参数：
+/*
+    *   const Network& SourceNetwork        输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/30
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::ShowNetwork(const Network& SourceNetwork) const {
+    std::cout << std::endl;
+    std::cout << SourceNetwork.ToString_brief() << std::endl;
+    std::cout << std::endl;
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：DeleteLayer
+//函数功能：删除指定Layer 对象，同时删除此Layer 内部神经元及其关联的层间突触连接
+//参数：
+/*
+    *   Network& SourceNetwork        输入参数
+    *   unsigned int LayerNumber            输入参数
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/7/30
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) const {
+    SourceNetwork.DeleteLayer(LayerNumber);
+}
+

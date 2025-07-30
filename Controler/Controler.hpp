@@ -30,6 +30,7 @@ class Controler
         //静态函数创建单例实例
         static Controler* GetInstance();
 
+        /*人工神经网络模型导入*/
         //输入路径的函数
         void InputFilePath(char* FilePath, unsigned int PathLength) const;
         //根据容器创建神经网络
@@ -39,6 +40,23 @@ class Controler
                                const char* NetworkName) const;
         //将.ANN文件导入成神经网络
         Network* ImportNetwork(const char* FilePath) const;
+
+        /*人工神经网络模型导出*/
+        //InputFilePath函数与导入相同
+        //根据网络导出存储网络的容器
+        void ExportNetwork(const Network& SourceNetwork,
+                           std::vector<NeuroContainer>& MyNeuroVector,
+                           std::set<SynapseContainer>&  MySynapseSet,
+                           std::vector<LayerContainer>& MyLayerVector,
+                           char* NetworkName) const;
+        //根据网络导出.ANN文件
+        void ExportNetwork(const Network& SourceNetwork, const char* FilePath) const;
+
+        /*人工神经网络模型修改*/
+        //列出所有Layer对象，显示其序号和内部神经元的数量、序号
+        void ShowNetwork(const Network& SourceNetwork) const;
+        //删除指定Layer 对象，同时删除此Layer 内部神经元及其关联的层间突触连接
+        void DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) const;
     private:
         //定义私有的构造函数，防止外部代码直接实例化
         Controler();

@@ -1,0 +1,16 @@
+# ../../Code/CPP/MyOOPBigHomework/ANNFiles/testControler.ANN
+G RotationNetwork
+# 3 Neurons
+N 0 0 
+N 0 0 
+N 0 0 
+# Layer 0: Neuron 3 to 5
+L 3 5 
+# Neuron 3 to 5: has one Dendrite
+S -1 3 1 
+S -1 4 1 
+S -1 5 1 
+# Neuron3 to 5: has one Axon
+S 3 -1 1 
+S 4 -1 1 
+S 5 -1 1 

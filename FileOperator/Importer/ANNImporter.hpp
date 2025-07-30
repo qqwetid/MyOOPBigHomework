@@ -8,6 +8,8 @@
 #ifndef ANNIMPORTER_HPP
 #define ANNIMPORTER_HPP
 
+#include <set>
+
 //----------------------------------------------------------------------------------------------------------
 //类名：ANNImporter
 //功能：导入ANN文件
