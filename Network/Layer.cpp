@@ -199,7 +199,6 @@ unsigned int Layer::GetNeuroNumber() const {
 Neuro* Layer::Query(unsigned int ID_input) {
     if(m_MyNeuros.size() == 0)                                  //如果这一层没有神经元，返回错误信息
     {
-        throw std::invalid_argument("Error: There is no Neuro!\n\tFailed to erase the Neuro.");
         return nullptr;
     }
     else
@@ -207,12 +206,39 @@ Neuro* Layer::Query(unsigned int ID_input) {
         MyNeurosType::iterator iter = m_MyNeuros.find(ID_input);    //查找序号为ID_input的神经元
         if (iter == m_MyNeuros.end())                               //若没找到，则返回空指针
         {
-            //throw std::invalid_argument("Error: Cannot find such Neuro.\n\tThe function will return `nullptr'");
             return nullptr;
         }
         else                                                        //若找到，则返回神经元对应的指针
         {
             return &(iter->second);
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Query_noset
+//函数功能：根据编号查找神经元（不可修改）
+//参数：unsigned int ID_input
+//返回值：const Neuro*
+//开发者：Jason Cheng   日期：2025/7/31
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+const Neuro* Layer::Query_noset(unsigned int ID_input) const {
+    if(m_MyNeuros.size() == 0)                                  //如果这一层没有神经元，返回错误信息
+    {
+        return nullptr;
+    }
+    else
+    {
+        MyNeurosType::const_iterator const_iter = m_MyNeuros.find(ID_input);    //查找序号为ID_input的神经元
+        if (const_iter == m_MyNeuros.end())                               //若没找到，则返回空指针
+        {
+            return nullptr;
+        }
+        else                                                        //若找到，则返回神经元对应的指针
+        {
+            return &(const_iter->second);
         }
     }
 }
@@ -345,7 +371,8 @@ std::string Layer::ToString_brief() const {
     Stream << "**Layer**" << std::endl;
     MyNeurosType::const_iterator const_iter_Neuros = m_MyNeuros.begin();
     while (const_iter_Neuros != m_MyNeuros.end()) {
-        Stream << "  **Neuro**" << std::endl;
+        Stream << "  ------------------------------Neurons in Layer-------------------------------" << std::endl;
+        Stream << std::endl;
         Stream << "  NeuroID: __" << (const_iter_Neuros->second).NeuroID <<"__." << std::endl;
         Stream << "  Bias: __" << (const_iter_Neuros->second).MySoma.GetBias() << "__;" << std::endl;
         Stream << "  Activation Function: __No." << (const_iter_Neuros->second).MySoma.GetActvtnFunc() << " ";
@@ -367,6 +394,7 @@ std::string Layer::ToString_brief() const {
                 break;
         }
         Stream << "__;" << std::endl;
+        Stream << std::endl;
         const_iter_Neuros++;
     }
     return Stream.str();

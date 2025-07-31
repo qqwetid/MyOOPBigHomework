@@ -57,6 +57,26 @@ class Controler
         void ShowNetwork(const Network& SourceNetwork) const;
         //删除指定Layer 对象，同时删除此Layer 内部神经元及其关联的层间突触连接
         void DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) const;
+        //添加⼀个Layer 对象，添加后内部没有Neuron 对象。
+        void InsertLayer(Network& SourceNetwork, unsigned int LayerNumber) const;
+        //列出指定Layer 对象中的所有Neuron 对象，显示其序号和偏置
+        void ShowLayer(const Layer& SourceLayer) const;
+        void ShowLayer(const Network& SourceNetwork, unsigned int LayerNumber) const;
+        //为一层添加一个神经元
+        void InsertNeuro(Network& SourceNetwork, unsigned int LayerNumber, double BiasSet, unsigned int ActvtnFnctnSet, unsigned int NeuroIDSet) const;
+        void InsertNeuro(Network& SourceNetwork, unsigned int LayerNumebr, const Neuro& SourceNeuro) const;
+        //修改指定Neuron 对象包含的偏置。
+        void SetBias(Neuro& SourceNeuro, double BiasSet) const;
+        void SetBias(Network& SourceNetwork, unsigned int NeuroID, double BiasSet) const;
+        //列出指定Neuron对象的突触连接关系信息。
+        void ShowNeuro(const Network& SourceNetwork, unsigned int NeuroID) const;
+        //删除指定Neuron 对象，同时删除关联的Synapse对象
+        void DeleteNeuro(Network& SourceNetwork, unsigned int NeuroID) const;
+        //连接指定的Neuron 对象。要求连接相邻层，且没有突触连接的neuron对象
+        void CnnctNeuro(Network& SourceNetwork, unsigned int FirstNeuroID, unsigned int SecondNeuroID, double WeightSet) const;
+
+        /*显示统计信息*/
+        void ShowElementNumbers(const Network& SourceNetwork) const;
     private:
         //定义私有的构造函数，防止外部代码直接实例化
         Controler();

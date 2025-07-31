@@ -492,6 +492,27 @@ unsigned int Network::GetNumberOfNeuros() const {
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：GetNumberOfSynapses
+//函数功能：获取突触的数量（树突+轴突）
+//参数： 无
+//返回值：unsigned int
+//开发者：Jason Cheng   日期：2025/7/31
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+unsigned int Network::GetNumberOfSynapses() const {
+    unsigned int NumberOfSynapses = 0;
+    for (auto& ThisLayer : MyLayers) {
+        for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {
+            const Neuro& ThisNeuro = ThisNeuroPair.second;
+            NumberOfSynapses += ThisNeuro.MyDendrites.size();   //加上每个神经元树突的个数
+        }
+    }
+    NumberOfSynapses += GetNumberOfNeuros();
+    return NumberOfSynapses;
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：QueryLayer
 //函数功能：根据编号查找层
 //参数： unsigned int NumberInput
@@ -532,6 +553,29 @@ Neuro* Network::QueryNeuro(unsigned int NumberInput) {
             return pAimNeuro;
         }
         iter_Layers++;
+    }
+    return pAimNeuro;                               //如果没有找到，就是返回nullptr
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：QueryNeuro_noset
+//函数功能：根据编号查找神经元（不修改）
+//参数： unsigned int NumberInput
+//返回值：Neuro*
+//开发者：Jason Cheng   日期：2025/7/31
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+const Neuro* Network::QueryNeuro_noset(unsigned int NumberInput) const {
+    MyLayersType::const_iterator const_iter_Layers = m_MyLayers.begin();
+    const Neuro* pAimNeuro = nullptr;                     //指针容器用于存放所找的神经元
+    while (const_iter_Layers != m_MyLayers.end()) {       //对层循环
+        const Layer& ThisLayer = *const_iter_Layers;
+        pAimNeuro = ThisLayer.Query_noset(NumberInput);
+        if (pAimNeuro != nullptr) {                 //如果找到了，则返回找到的指针
+            return pAimNeuro;
+        }
+        const_iter_Layers++;
     }
     return pAimNeuro;                               //如果没有找到，就是返回nullptr
 }
@@ -662,6 +706,7 @@ void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
         }
     }
     else if (SecondNeuro == -1) {       //考虑第二个值是-1的情形
+        /*
         Neuro* pLyingNeuro = QueryNeuro(FirstNeuro);
         if (pLyingNeuro->HasDndrtCnnct(nullptr) == true) {  //如果该神经元已经有指向空指针的树突，则throw错误信息
             throw std::invalid_argument("Error: Your first neuron already has a Synapse connecting with nullptr.");
@@ -670,10 +715,12 @@ void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
         else {                          //如果该神经元没有指向空指针的树突，则添加
             pLyingNeuro->InsertADendrite(Weight, nullptr);
         }
+            */
+        //空函数体
     }
     else {                              //考虑两个值都不是-1的情形
-        Neuro* pLyingNeuro = QueryNeuro(FirstNeuro);
-        Neuro* pCnnctNeuro = QueryNeuro(SecondNeuro);
+        Neuro* pCnnctNeuro = QueryNeuro(FirstNeuro);
+        Neuro* pLyingNeuro = QueryNeuro(SecondNeuro);
         if (pLyingNeuro->HasDndrtCnnct(pCnnctNeuro) == true) {  //如果该神经元已经有指向第一个神经元的树突，则throw错误信息
             throw std::invalid_argument("Error: Your second neuron already has a Synapse connecting with your first neuron.");
             exit(1);

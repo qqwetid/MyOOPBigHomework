@@ -54,6 +54,7 @@ class Layer
         unsigned int GetNeuroNumber() const;
         //根据编号查找神经元
         Neuro* Query(unsigned int ID_input);
+        const Neuro* Query_noset(unsigned int ID_input) const;
         //判断一个树突是否在一层里面有连接
         static bool HasConnection(const Layer& LayerToCheck, const Dendrite& DndrtToCheck);
         

@@ -303,11 +303,14 @@ void Neuro::InsertADendrite(double Weight_set, Neuro* pConnectedNeuro_set) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::DeleteDendrite(const Neuro& Source) {
+    /*
     if (m_MyDendrites.size() == 0)
     {
         throw std::invalid_argument("Error: There is no Dendrite!\n\tFail to erase the dendrite.");
     }
-    else        //若树突数量不为0
+        */
+    //else        //若树突数量不为0
+    if (m_MyDendrites.size() != 0)
     {
         MyDndrtType::const_iterator iter;
         for (iter = m_MyDendrites.begin(); iter != m_MyDendrites.end();)
@@ -318,10 +321,12 @@ void Neuro::DeleteDendrite(const Neuro& Source) {
                 break;
             }
             iter++;
+            /*
             if (iter == m_MyDendrites.end())                //若未找到，返回错误信息
             {
                 throw std::invalid_argument("Error: Cannot find this Dendrite!\n\tFail to erase the dendrite.");
             }
+                */
         }
     }
 }
@@ -336,25 +341,33 @@ void Neuro::DeleteDendrite(const Neuro& Source) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::DeleteDendrite(unsigned int IDToDelete) {
+    /*
     if (m_MyDendrites.size() == 0)
     {
         throw std::invalid_argument("Error: There is no Dendrite!\n\tFail to erase the dendrite.");
     }
     else        //若树突数量不为0
+    */
+    if (m_MyDendrites.size() != 0)
     {
         MyDndrtType::const_iterator iter;
         for (iter = m_MyDendrites.begin(); iter != m_MyDendrites.end();)
         {
-            if (iter->GetNeuro()->NeuroID == IDToDelete)    //若存在连接Source的神经元
+            if (iter->GetNeuro() != nullptr)
             {
-                m_MyDendrites.erase(iter);                  //删除这个树突
-                break;
+                if (iter->GetNeuro()->NeuroID == IDToDelete)    //若存在连接Source的神经元
+                {
+                    m_MyDendrites.erase(iter);                  //删除这个树突
+                    break;
+                }
             }
             iter++;
+            /*
             if (iter == m_MyDendrites.end())                //若未找到，返回错误信息
             {
                 throw std::invalid_argument("Error: Cannot find this Dendrite!\n\tFail to erase the dendrite.");
             }
+                */
         }
     }
 }

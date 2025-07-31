@@ -30,12 +30,13 @@ int main() {
         if (pMyNetwork != nullptr)
         {
             pMyControler->ShowNetwork(*pMyNetwork);
+            for (int i = 0; i < 6; i++) {
+                pMyControler->ShowNeuro(*pMyNetwork, i);
+            }
+            pMyControler->ShowElementNumbers(*pMyNetwork);
         }
-        pMyControler->DeleteLayer(*pMyNetwork, 0);
-        pMyControler->ShowNetwork(*pMyNetwork);
-        pMyControler->ExportNetwork(*pMyNetwork, "../../Code/CPP/MyOOPBigHomework/ANNFiles/testControler.ANN");
-    delete pMyControler;
-    delete pMyNetwork;
+        delete pMyControler;
+        delete pMyNetwork;
     }
     catch(const std::exception& e)
     {

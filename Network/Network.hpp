@@ -69,10 +69,13 @@ class Network
         unsigned int GetNumberOfLayers() const;
         //获取神经元的数量
         unsigned int GetNumberOfNeuros() const;
+        //获取突触的数量（树突+轴突）
+        unsigned int GetNumberOfSynapses() const;
         //根据编号查找层
         Layer* QueryLayer(unsigned int NumberInput);
         //根据编号查找神经元
         Neuro* QueryNeuro(unsigned int NumberInput);
+        const Neuro* QueryNeuro_noset(unsigned int NumberInput) const;
         //获取第一层神经元的数量
         unsigned int GetNmbrOfNursInFstLyr() const;
 
