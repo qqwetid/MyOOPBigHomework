@@ -13,7 +13,22 @@
 //功能：导出ANN文件
 //接口： 
 /*
-
+    *   ANNExporter(const char* SetFileName = "");
+    *   ANNExporter& operator=(const ANNExporter& Source);
+    *   ANNExporter(const ANNExporter& Source);
+    *   ~ANNExporter();
+    *   
+    *   Exporter中已定义:
+    *   *   void Importfile(const char* FileName);
+    *   *   void clear();
+    *   *   const char* GetFileName() const;
+    *   
+    *   bool IsANNFile() const;
+    *   virtual bool IsValid() const override;
+    *   virtual void OutputFile(const std::vector<NeuroContainer>& MyNeuroVector,
+    *                           const std::set<SynapseContainer>&  MySynapseSet,
+    *                           const std::vector<LayerContainer>& MyLayerVector,
+    *                           const char* NetworkName                          ) override;
 */
 //开发者：Jason Cheng   日期：2025/7/26
 //更改记录：

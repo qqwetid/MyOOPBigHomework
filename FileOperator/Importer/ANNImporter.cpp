@@ -177,7 +177,7 @@ bool ANNImporter::IsValid(int& NumOfNeuros, int& NumOfLayers) const {
             int iActvtnFnctn;
             InFile >> dBias >> iActvtnFnctn;
             std::getline(InFile, ThisRow);
-            if (ThisRow != " ") {                        //如果这行不合法，throw错误信息
+            if (ThisRow != " ") {                       //如果这行不合法，throw错误信息
                 throw std::invalid_argument("Error: There is an invalid neuron row.");
             }
             break;
@@ -187,7 +187,7 @@ bool ANNImporter::IsValid(int& NumOfNeuros, int& NumOfLayers) const {
             int iSecondNum;                             //定义两个整数存储信息
             InFile >> iFirstNum >> iSecondNum;
             std::getline(InFile, ThisRow);
-            if (ThisRow != " ") {                        //如果这行不合法，throw错误信息
+            if (ThisRow != " ") {                       //如果这行不合法，throw错误信息
                 throw std::invalid_argument("Error: There is an invalid Layer row.");
             }
             break;

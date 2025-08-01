@@ -197,7 +197,7 @@ unsigned int Layer::GetNeuroNumber() const {
 //----------------------------------------------------------------------------------------------------------
 
 Neuro* Layer::Query(unsigned int ID_input) {
-    if(m_MyNeuros.size() == 0)                                  //如果这一层没有神经元，返回错误信息
+    if(m_MyNeuros.size() == 0)                                      //如果这一层没有神经元，返回错误信息
     {
         return nullptr;
     }
@@ -225,18 +225,18 @@ Neuro* Layer::Query(unsigned int ID_input) {
 //----------------------------------------------------------------------------------------------------------
 
 const Neuro* Layer::Query_noset(unsigned int ID_input) const {
-    if(m_MyNeuros.size() == 0)                                  //如果这一层没有神经元，返回错误信息
+    if(m_MyNeuros.size() == 0)                                                  //如果这一层没有神经元，返回错误信息
     {
         return nullptr;
     }
     else
     {
         MyNeurosType::const_iterator const_iter = m_MyNeuros.find(ID_input);    //查找序号为ID_input的神经元
-        if (const_iter == m_MyNeuros.end())                               //若没找到，则返回空指针
+        if (const_iter == m_MyNeuros.end())                                     //若没找到，则返回空指针
         {
             return nullptr;
         }
-        else                                                        //若找到，则返回神经元对应的指针
+        else                                                                    //若找到，则返回神经元对应的指针
         {
             return &(const_iter->second);
         }
@@ -303,7 +303,7 @@ void Layer::InsertNeuro(Neuro& Neuro_set) {
 //----------------------------------------------------------------------------------------------------------
 
 void Layer::DeleteNeuro(unsigned int IDToDelete) {
-    if(m_MyNeuros.size() == 0)                                  //如果这一层没有神经元，返回错误信息
+    if(m_MyNeuros.size() == 0)                                          //如果这一层没有神经元，返回错误信息
     {
         throw std::invalid_argument("Error: There is no Neuro to delete!\n\tFailed to erase the Neuro.");
     }
@@ -399,35 +399,3 @@ std::string Layer::ToString_brief() const {
     }
     return Stream.str();
 }
-
-
-
-
-
-
-
-
-/*
-int main()  {
-    Neuro n1(0.5, 1, 3, 1658);
-    Neuro n2(0, 0, 4, 2);       //编号为2
-    Neuro n3(0, 0, 5, 3);
-    Neuro n4(0, 0, 0, 1658);
-    n1.InsertADendrite(1.1, &n2);
-    n1.InsertADendrite(2.2, &n3);
-    Layer l1;
-    try
-    {
-        l1.InsertNeuro(n1);
-        l1.InsertNeuro(n2);
-        l1.InsertNeuro(n3);
-        
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }   
-    std::cout << l1.ToString() << std::endl;
-    return 0;
-}
-*/

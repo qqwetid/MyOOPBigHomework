@@ -35,7 +35,7 @@ Network::Network(const char* NetworkName, unsigned int NumOfNursInFstLyr, unsign
     //初始化层
     m_MyLayers.reserve(NumberOfLayers);
     //先给神经网络名字
-    if (strlen(NetworkName) >= 40)      //若NetworkName过长，则throw错误信息，并将名字赋成错误信息
+    if (strlen(NetworkName) >= 40)                      //若NetworkName过长，则throw错误信息，并将名字赋成错误信息
     {
         throw std::invalid_argument("Error: Your Network Name is too long!\n\tFailed to set the name, please change another name with no longer than 40 characters.");
         strcpy_s(m_cNetworkName, 40, "Error: Failed to set the name.");
@@ -57,7 +57,7 @@ Network::Network(const char* NetworkName, unsigned int NumOfNursInFstLyr, unsign
             std::cout << "Continue to the next Neuro." << std::endl;
         }
     }
-    m_MyLayers.push_back(FirstLayer);   //将第一层添加到网络中
+    m_MyLayers.push_back(FirstLayer);                   //将第一层添加到网络中
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -249,13 +249,13 @@ Network::~Network() {
 
 bool Network::IsFirstLyrValid() const {
     const MyNeurosType& NeurosInMyFirstLayer = m_MyLayers.begin()->GetMyNeuros();   //第一层存储神经元的容器
-    if (NeurosInMyFirstLayer.size() == 0)       //如果第一层中没有神经元，返回错误信息
+    if (NeurosInMyFirstLayer.size() == 0)                                   //如果第一层中没有神经元，返回错误信息
     {
         throw std::invalid_argument("Error: There is no neuron in the first layer.");
     }
     MyNeurosType::const_iterator const_iter = NeurosInMyFirstLayer.begin();
     while (const_iter != NeurosInMyFirstLayer.end()) {
-        if ((const_iter->second).MyDendrites.size() != 1)   //如果神经元树突的数量不为1，则返回错误信息
+        if ((const_iter->second).MyDendrites.size() != 1)                   //如果神经元树突的数量不为1，则返回错误信息
         {
             throw std::invalid_argument("Error: Number of dendrites does not equal to 1.");
         }
@@ -348,96 +348,6 @@ bool Network::IsValid() const {
 //更改记录
 //----------------------------------------------------------------------------------------------------------
 void Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve) {
-    /*
-    std::vector<double> TrueDataInput(m_MyLayers.begin()->GetNeuroNumber());    //创建向量存放输入的信息
-    if (SizeOfDataVector > m_MyLayers.begin()->GetNeuroNumber())                //若输入的数据多于第一层神经元的数量，throw警告信息
-    {
-        try
-        {
-            std::ostringstream Stream;
-            Stream << "WARNING: The number of your data point is **GREATER** than the number of your neurons." << std::endl;
-            Stream << "\tYour DataVector will be cut to size " << m_MyLayers.begin()->GetNeuroNumber() << ".";
-            throw std::invalid_argument(Stream.str());
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-            std::cout << "Whether to continue?  (y/n)"  << std::endl;
-            //然后用户执行判断程序，如果用户愿意继续，则程序继续
-            char ToContinue;
-            std::cin >> ToContinue;
-            fflush(stdin);          //清空缓冲区
-            switch (ToContinue)
-            {
-                case 'y':           //若用户继续
-                    for (int i = 0; i < m_MyLayers.begin()->GetNeuroNumber(); i++) {        //将数据导入vector容器
-                        TrueDataInput.push_back(DataInput[i]);
-                    }
-                    break;
-                case 'n':
-                    std::cout << "Inference break with return 1." << std::endl;
-                    return 1;       //程序结束
-                    break;
-                default:
-                    std::cout << "Error: You've input an invalid character!" << std::endl;
-                    std::cout << "Inference break with return 1." << std::endl;
-                    return 1;       //程序结束
-                    break;
-            }
-        }
-    }
-    else if (SizeOfDataVector < m_MyLayers.begin()->GetNeuroNumber())           //若输入的数据少于第一层神经元的数量，throw警告信息
-    {
-        try
-        {
-            std::ostringstream Stream;
-            Stream << "WARNING: The number of your data point is **LESS** than the number of your neurons." << std::endl;
-            Stream << "\tThis program will fill in the missed data with 0.";
-            throw std::invalid_argument(Stream.str());
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-            std::cout << "Whether to continue?  (y/n)"  << std::endl;
-            //然后用户执行判断程序，如果用户愿意继续，则程序继续
-            char ToContinue;
-            std::cin >> ToContinue;
-            fflush(stdin);          //清空缓冲区
-            switch (ToContinue)
-            {
-                case 'y':           //若用户继续
-                    for (int i = 0; i < m_MyLayers.begin()->GetNeuroNumber(); i++) {        //将数据导入vector容器
-                        if (i < SizeOfDataVector)
-                        {
-                            TrueDataInput.push_back(DataInput[i]);
-                        }
-                        else
-                        {
-                            TrueDataInput.push_back(0.0);
-                        }
-                    }
-                    break;
-                case 'n':
-                    std::cout << "Inference break with return 1." << std::endl;
-                    return 1;       //程序结束
-                    break;
-                default:
-                    std::cout << "Error: You've input an invalid character!" << std::endl;
-                    std::cout << "Inference break with return 1." << std::endl;
-                    return 1;       //程序结束
-                    break;
-            }
-        }
-
-        
-    }
-    else        //对于输入的向量维数和第一层神经元数量相同的情形
-    {
-        for (int i = 0; i < SizeOfDataVector; i++) {
-            TrueDataInput.push_back(DataInput[i]);
-        }
-    }
-    */
     if (SizeOfDataVector != m_MyLayers.begin()->GetNeuroNumber()) {     //如果数组大小和第一层不匹配，则输出错误信息
         throw std::invalid_argument("Dimension of the input vector does not fit the number of neurons in the first layer.");
     }
@@ -455,16 +365,10 @@ void Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, 
             iter_Layers->ForwardPropagation();
             iter_Layers++;
         }
-        //iter_Layers = m_MyLayers.rbegin();                              //将指针指到最后一层
-        /*test*/
-        //-----------------------------------------
-        sig0 = m_MyLayers.back().GetMyNeuros().at(3).SignalNow;
-        sig1 = m_MyLayers.back().GetMyNeuros().at(4).SignalNow;
-        sig2 = m_MyLayers.back().GetMyNeuros().at(5).SignalNow;
         Layer& MyLastLayer = m_MyLayers.back();
         MyLastLayer.LayerSignalNow(SignalOutput, SizeToReserve);        //将信号保存，如果期望接收的大小和实际不符，会输出警告信息
     }
-    else                                //如果神经网络不合法，则throw警告信息
+    else                                                                //如果神经网络不合法，则throw警告信息
     {
         throw std::invalid_argument("Error: Your network is invalid.\n\tNetwork::IsValid() return 0.Unknown error.");
     }
@@ -664,10 +568,8 @@ void Network::InsertLayer(Layer& SourceLayer, unsigned int LayerNumber) {
 void Network::CnnctNursByDndrt(double WeightToSet, 
                                unsigned int CnnctLayerID, unsigned int CnnctNeuroID, 
                                unsigned int LyingLayerID, unsigned int LyingNeuroID) {
-    //Layer& CnnctLayer = *(m_MyLayers.begin() + CnnctLayerID);
     Layer& CnnctLayer = m_MyLayers.at(CnnctLayerID);
     Neuro* pCnnctNeuro = CnnctLayer.Query(CnnctNeuroID);
-    //Layer& LyingLayer = *(m_MyLayers.begin() + LyingLayerID);
     Layer& LyingLayer = m_MyLayers.at(LyingLayerID);
     Neuro* pLyingNeuro = LyingLayer.Query(LyingNeuroID);
     pLyingNeuro->InsertADendrite(WeightToSet, pCnnctNeuro);
@@ -719,17 +621,7 @@ void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
         }
     }
     else if (SecondNeuro == -1) {       //考虑第二个值是-1的情形
-        /*
-        Neuro* pLyingNeuro = QueryNeuro(FirstNeuro);
-        if (pLyingNeuro->HasDndrtCnnct(nullptr) == true) {  //如果该神经元已经有指向空指针的树突，则throw错误信息
-            throw std::invalid_argument("Error: Your first neuron already has a Synapse connecting with nullptr.");
-            exit(1);
-        }
-        else {                          //如果该神经元没有指向空指针的树突，则添加
-            pLyingNeuro->InsertADendrite(Weight, nullptr);
-        }
-            */
-        //空函数体
+        //空语句块
     }
     else {                              //考虑两个值都不是-1的情形
         Neuro* pCnnctNeuro = QueryNeuro(FirstNeuro);
@@ -759,7 +651,6 @@ void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
 //----------------------------------------------------------------------------------------------------------
 
 void Network::DeleteLayer(unsigned int LayerIDToDelete) {
-    //Layer& MyLayerToDelete = *(m_MyLayers.begin() + LayerIDToDelete);
     Layer& MyLayerToDelete = m_MyLayers.at(LayerIDToDelete);
     //循环所有的树突，找到与MyLayerToDelete中神经元的连接
     MyLayersType::iterator iter_Layers = m_MyLayers.begin();
@@ -813,7 +704,7 @@ void Network::DeleteLayer(unsigned int LayerIDToDelete) {
 void Network::DeleteDndrtBtwnNurs(unsigned int CnnctNeuroID, unsigned int MyNeuroID) {
     Neuro* pMyNeuro = QueryNeuro(MyNeuroID);
     Neuro* pCnnctNeuro = QueryNeuro(CnnctNeuroID);
-    if (pMyNeuro == nullptr)                //如果没找到树突所在的神经元，throw错误信息
+    if (pMyNeuro == nullptr)                    //如果没找到树突所在的神经元，throw错误信息
     {
         std::ostringstream Stream;
         Stream << "Error: Cannot find the Neuro (ID = __" << MyNeuroID << "__ ).";
@@ -888,26 +779,3 @@ std::string Network::ToString_brief() const {
     }
     return Stream.str();
 }
-
-/*
-int main() {
-    Neuro n1, n2, n3, n4;
-    Layer l1;
-    l1.InsertNeuro(n1);
-    l1.InsertNeuro(n2);
-    l1.InsertNeuro(n3);
-    l1.InsertNeuro(n4);
-    Layer l2;
-    l2 = l1;
-    std::cout << "l1:" << std::endl;
-    std::cout << l1.ToString() << std::endl;
-    std::cout << "l2:" << std::endl;
-    std::cout << l2.ToString() << std::endl;
-    Network N1("Network1", 2);
-    Network N2("Network2");
-    N2 = N1;
-    std::cout << N1.ToString() << std::endl;
-    std::cout << N1.ToString_brief() << std::endl;
-    return 0;
-}
-    */

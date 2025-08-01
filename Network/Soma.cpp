@@ -24,7 +24,6 @@
 Soma::Soma(const double Bias_set, const int Num_set) {
     try
     {
-//        Soma::IsValid(Num_set);     //判断激活函数号码是否合法，若不合法会throw错误信息
         m_iNumOfActvtnFunc = Num_set;
     }
     catch(const std::exception& e)

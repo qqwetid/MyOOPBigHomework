@@ -147,12 +147,3 @@ std::string Axon::ToString() const {
     Stream << "Weight:\t" << GetWeight() << std::endl;
     return Stream.str();
 }
-
-/*
-int main() {
-    Axon a1, a2;
-    a1 = a2;
-    a2 = a1;
-    std::cout << a1.ToString() << std::endl;
-}
-*/

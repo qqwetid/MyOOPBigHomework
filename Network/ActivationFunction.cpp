@@ -46,15 +46,3 @@ double ActivationFunction::Tanh(const double& Signal) {
 double ActivationFunction::ReLU(const double& Signal) {
     return (Signal > 0) ? Signal : 0;   //ReLU(x) = max(x, 0)
 }
-
-/*
-#include <iostream>
-int main() {
-    double d;
-    std::cin >> d;
-    std::cout << ActivationFunction::Sigmoid(d) << std::endl;
-    std::cout << ActivationFunction::Tanh(d) << std::endl;
-    std::cout << ActivationFunction::ReLU(d) << std::endl;
-    return 0;
-}
-*/

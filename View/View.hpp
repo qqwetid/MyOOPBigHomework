@@ -13,7 +13,10 @@
 //功能：显示用户界面
 //接口： 
 /*
-    *   待编写
+    *   static void StartView();
+    *   static void Main();
+    *   static void Branch3();
+    *   static void Branch5();
 */
 //开发者：Jason Cheng   日期：2025/8/1
 //更改记录：
@@ -26,7 +29,7 @@ class View {
         static void Branch3();
         static void Branch5();
     private:
-
+        //无私有数据成员
 };
 
 #endif /*VIEW_HPP*/

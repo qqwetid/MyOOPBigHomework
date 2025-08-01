@@ -112,12 +112,3 @@ std::string Dendrite::ToString() const {
     Stream << "Address of the connected Neuro:\t" << m_pConnectNeuro << std::endl;
     return Stream.str();
 }
-
-
-/*
-int main() {
-    Axon a1;
-    Dendrite d1(3.1, &a1);
-    std::cout << d1.ToString() << std::endl;
-}
-*/

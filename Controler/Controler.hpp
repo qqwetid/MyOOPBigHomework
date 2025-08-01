@@ -13,7 +13,52 @@
 //功能：控制器
 //接口： 
 /*
-    *   待编写
+    *   Controler(const Controler& Source) = delete;    
+    *   Controler& operator=(const Controler& Source) = delete;
+    *   static Controler* GetInstance();
+    *   
+    *   void start() const;
+    *   void MainInterface(Network* pMyNetwork) const;
+    *   void Branch3Modify(Network* pMyNetwork) const;
+    *   void Branch5Inference(Network* pMyNetwork) const;
+    *   
+    *   void InputInt(int& Myint) const;
+    *   void InputUint(unsigned int& MyUint) const;
+    *   void InputDouble(double& Mydouble) const;
+    *   bool IsToContinue() const;
+    *   
+    *   void InputFilePath(char* FilePath, unsigned int PathLength) const;
+    *   Network* ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVector,
+    *                          const std::set<SynapseContainer>&  MySynapseSet,
+    *                          const std::vector<LayerContainer>& MyLayerVector,
+    *                          const char* NetworkName) const;
+    *   Network* ImportNetwork(const char* FilePath) const;
+    *   
+    *   void ExportNetwork(const Network& SourceNetwork,
+    *                      std::vector<NeuroContainer>& MyNeuroVector,
+    *                      std::set<SynapseContainer>&  MySynapseSet,
+    *                      std::vector<LayerContainer>& MyLayerVector,
+    *                      char* NetworkName) const;
+    *   void ExportNetwork(const Network& SourceNetwork, const char* FilePath) const;
+    *   
+    *   void ShowNetwork(const Network& SourceNetwork) const;
+    *   void DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) const;
+    *   void InsertLayer(Network& SourceNetwork, unsigned int LayerNumber) const;
+    *   void ShowLayer(const Layer& SourceLayer) const;
+    *   void ShowLayer(const Network& SourceNetwork, unsigned int LayerNumber) const;
+    *   void InsertNeuro(Network& SourceNetwork, unsigned int LayerNumber, double BiasSet, unsigned int ActvtnFnctnSet, unsigned int NeuroIDSet) const;
+    *   void InsertNeuro(Network& SourceNetwork, unsigned int LayerNumebr, const Neuro& SourceNeuro) const;
+    *   void SetBias(Neuro& SourceNeuro, double BiasSet) const;
+    *   void SetBias(Network& SourceNetwork, unsigned int NeuroID, double BiasSet) const;
+    *   void ShowNeuro(const Network& SourceNetwork, unsigned int NeuroID) const;
+    *   void DeleteNeuro(Network& SourceNetwork, unsigned int NeuroID) const;
+    *   void CnnctNeuro(Network& SourceNetwork, unsigned int FirstNeuroID, unsigned int SecondNeuroID, double WeightSet) const;
+    *   
+    *   void ShowElementNumbers(const Network& SourceNetwork) const;
+    *   
+    *   
+    *   bool IsValid(const Network& SourceNetwork) const;
+    *   void Inference(Network& SourceNetwork, const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve) const;
 */
 //开发者：Jason Cheng   日期：2025/7/28
 //更改记录：

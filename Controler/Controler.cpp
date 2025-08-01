@@ -77,27 +77,27 @@ void Controler::start() const{
     while (true) {
         try
         {
-            View::StartView();
+            View::StartView();                                  //初始界面的显示
             char FilePath[100];
             InputFilePath(FilePath, 100);                       //导入文件
             Network* pMyNetwork = ImportNetwork(FilePath);      //导入神经网络
             MainInterface(pMyNetwork);                          //进入主界面
             break;
         }
-        catch(int a)
+        catch(int a)                                            //接收退出信号
         {
             if (a == -1) {
                 std::cout << "Exit the programme" << std::endl;
             }
             break;
         }
-        catch(double b)
+        catch(double b)                                         //接收返回主界面的信号，不过由于还没开始，所以返回start
         {
             std::cout << "Your Program has not started yet! Let's restart." << std::endl;
             continue;
         }
         
-        catch(const std::exception& e)
+        catch(const std::exception& e)                          //接收报错信号
         {
             std::cerr << e.what() << '\n';
             continue;
@@ -142,7 +142,6 @@ void Controler::MainInterface(Network* pMyNetwork) const {
                     Network* pAnotherNetwork = ImportNetwork(FilePath);   //导入神经网络
                     delete pMyNetwork;
                     pMyNetwork = pAnotherNetwork;
-                    //MainInterface(pMyNetwork);                        //进入主界面
                     break;
                 }
                 case 2 : {
@@ -161,7 +160,6 @@ void Controler::MainInterface(Network* pMyNetwork) const {
                     }
                     else {                                              //如果神经网络还在
                         ExportNetwork(*pMyNetwork, FilePath);
-                        //MainInterface(pMyNetwork);                      //返回主界面
                     }
                     break;
                 }
@@ -183,7 +181,6 @@ void Controler::MainInterface(Network* pMyNetwork) const {
                     }
                     else {
                         ShowElementNumbers(*pMyNetwork);
-                        //MainInterface(pMyNetwork);
                     }
                     break;
                 }
@@ -547,10 +544,6 @@ void Controler::InputFilePath(char* FilePath, unsigned int PathLength) const {
     while (true) {
         try
         {
-            /*
-            std::cin.clear();                                   // 清除错误标志
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
-            */
             std::cout << ">>> Please input the path of your file (e.g. ./ANNFiles/simple.ANN):" << std::endl;
             std::string MyString;
             std::getline(std::cin, MyString);
@@ -599,10 +592,10 @@ bool Controler::IsToContinue() const {
     std::cout << ">>> Whether to continue?[y/n]:";
     char YN;
     std::cin.get(YN);
-    std::cin.clear();  // 清除错误标志
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+    std::cin.clear();                                                   // 清除错误标志
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 丢弃无效输入
         switch (YN) {
-            case 'Y' :              //Y和y则程序继续
+            case 'Y' :                                                  //Y和y则程序继续
             case 'y' :
                 return true;
                 break;
@@ -642,7 +635,6 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
     //删除构造函数带来的第一层
     pMyNetwork->DeleteLayer(0);
     //创建神经元
-    //std::vector<Neuro> MyNeuros(MyNeuroVector.size());
     std::vector<Neuro> MyNeuros;
     MyNeuros.reserve(MyNeuroVector.size());
     std::vector<NeuroContainer>::const_iterator const_iter_NrVctr = MyNeuroVector.begin();
@@ -656,20 +648,17 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
     while (const_iter_LyrVctr != MyLayerVector.end()) {         //对层的容器循环，将层插入到神经网络
         Layer ThisLayer;
         for (int i = const_iter_LyrVctr->StartNeuro; i <= const_iter_LyrVctr->EndNeuro; i++) {
-            ThisLayer.InsertNeuro(MyNeuros.at(i));     //将神经元插入到层中
+            ThisLayer.InsertNeuro(MyNeuros.at(i));              //将神经元插入到层中
         }
         pMyNetwork->InsertLayer(ThisLayer);
         const_iter_LyrVctr++;
     }
-    /*test*/
-    //unsigned int test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
     //将树突插入神经网络
     std::set<SynapseContainer>::const_iterator const_iter_SynpsSet = MySynapseSet.begin();
     while (const_iter_SynpsSet != MySynapseSet.end()) {         //对突触的容器循环，将突触插入到神经网络
         pMyNetwork->CnnctNursByDndrt(const_iter_SynpsSet->CnnctNeuro, const_iter_SynpsSet->LyingNeuro, const_iter_SynpsSet->Weight);
         const_iter_SynpsSet++;
     }
-    //test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
     std::cout << "Your Network " << NetworkName << " has been imported successfully!" << std::endl;
     std::cout << std::endl;
     return pMyNetwork;
@@ -1101,11 +1090,11 @@ void Controler::ShowNeuro(const Network& SourceNetwork, unsigned int NeuroID) co
         std::cout << "  Synapse from this neuron connect with:\n  ";
         MyDndrtType::const_iterator const_iter_Dndrts = pThisNeuro->MyDendrites.begin();
         while (const_iter_Dndrts != pThisNeuro->MyDendrites.end()) {
-            if (const_iter_Dndrts->GetNeuro() != nullptr) { //如果另一端有神经元，则输出神经元编号
+            if (const_iter_Dndrts->GetNeuro() != nullptr) {                 //如果另一端有神经元，则输出神经元编号
                 std::cout << "No." << const_iter_Dndrts->GetNeuro()->NeuroID 
                           << ", weight: " << const_iter_Dndrts->GetWeight() << "; ";
             }
-            else {                                          //如果另一端没有神经元，则输出-1
+            else {                                                          //如果另一端没有神经元，则输出-1
                 std::cout << "-1(Dendrite), weight: " << const_iter_Dndrts->GetWeight() << "; ";
             }
             const_iter_Dndrts++;
@@ -1163,18 +1152,6 @@ void Controler::DeleteNeuro(Network& SourceNetwork, unsigned int NeuroID) const 
             for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {
                 Neuro* pThisNeuro = SourceNetwork.QueryNeuro(ThisNeuroPair.first);
                 pThisNeuro->DeleteDendrite(NeuroID);
-                /*
-                MyDndrtType::iterator iter_Dndrts = pThisNeuro->SetDendrites().begin();
-                while (iter_Dndrts != pThisNeuro->SetDendrites().end()) {
-                    if (iter_Dndrts->GetNeuro() != nullptr) {
-                        if (iter_Dndrts->GetNeuro()->NeuroID == NeuroID) {
-                            unsigned int iterPlace = iter_Dndrts - pThisNeuro->SetDendrites().begin();
-                            pThisNeuro->DeleteDendrite(NeuroID);
-                        }
-                    }
-                    iter_Dndrts++;
-                }
-                    */
             }
         }
 

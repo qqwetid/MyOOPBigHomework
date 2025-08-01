@@ -117,14 +117,3 @@ std::string Synapse::ToString() const {
     Stream << "Weight:\t" << m_rWeight << std::endl;
     return Stream.str();
 }
-
-/*
-int main() {
-    Synapse s1(3.7);
-    std::cout << s1.ToString() << std::endl;
-    std::cout << s1.GetWeight() << std::endl;
-    s1.SetWeight(6.4);
-    std::cout << s1.ToString() << std::endl;
-    return 0;
-}
-*/

@@ -22,7 +22,7 @@ class Synapse
 {
     public:
         //构造函数，赋值和拷贝构造函数
-        Synapse(double weight = 1);     //默认权重为1
+        Synapse(double weight = 1);         //默认权重为1
         Synapse& operator=(const Synapse& Source);
         Synapse(const Synapse& Source);
         //虚析构函数

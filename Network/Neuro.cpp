@@ -38,8 +38,8 @@ Neuro::Neuro(double bias_set, int NumOfActvtnFunc_set, int NumOfDndrts , unsigne
 {
     m_MyDendrites.reserve(NumOfDndrts);
     m_rSignalNow = 0;
-    m_uNeuroID   = NeuroID_set;         //设置编号
-    s_uNeuroCount++;                    //神经元个数的计数器值+1
+    m_uNeuroID   = NeuroID_set;                             //设置编号
+    s_uNeuroCount++;                                        //神经元个数的计数器值+1
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ Neuro::Neuro(double bias_set, int NumOfActvtnFunc_set, int NumOfDndrts , unsigne
 //----------------------------------------------------------------------------------------------------------
 
 Neuro& Neuro::operator=(const Neuro& Source) {
-    if (this != &Source)    //避免不必要的拷贝
+    if (this != &Source)                                            //避免不必要的拷贝
     {
         m_MySoma = Source.MySoma;
         m_MyAxon = Source.MyAxon;
@@ -77,13 +77,13 @@ Neuro& Neuro::operator=(const Neuro& Source) {
 //----------------------------------------------------------------------------------------------------------
 
 Neuro::Neuro(const Neuro& Source) :
-                m_MySoma(Source.MySoma),         //拷贝构造m_MySoma
-                m_MyAxon(Source.MyAxon),         //拷贝构造m_MyAxon
-                m_MyDendrites(Source.MyDendrites)//拷贝构造m_MyDendrites
+                m_MySoma(Source.MySoma),            //拷贝构造m_MySoma
+                m_MyAxon(Source.MyAxon),            //拷贝构造m_MyAxon
+                m_MyDendrites(Source.MyDendrites)   //拷贝构造m_MyDendrites
 {
     m_rSignalNow = Source.SignalNow;
-    m_uNeuroID   = Source.NeuroID;      //拷贝Source的ID
-    s_uNeuroCount++;                    //神经元的数量+1
+    m_uNeuroID   = Source.NeuroID;                  //拷贝Source的ID
+    s_uNeuroCount++;                                //神经元的数量+1
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -280,16 +280,16 @@ void Neuro::InsertADendrite(const Dendrite& Source) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::InsertADendrite(double Weight_set, Neuro* pConnectedNeuro_set) {
-    if (pConnectedNeuro_set != nullptr) {                                 //检查连接的神经元是否是空的，如果不是空的就要判断是否已经有连接相同神经元的树突
-        if (HasDndrtCnnct(pConnectedNeuro_set)) {                         //如果有相同神经元，throw错误信息
+    if (pConnectedNeuro_set != nullptr) {                               //检查连接的神经元是否是空的，如果不是空的就要判断是否已经有连接相同神经元的树突
+        if (HasDndrtCnnct(pConnectedNeuro_set)) {                       //如果有相同神经元，throw错误信息
             std::ostringstream Stream;
             Stream << "Error: Failed to insert this Dendrite." << std::endl;
             Stream << "\tThere is already a dendrite connecting with a same neuron.";
             throw std::invalid_argument(Stream.str());
         }
     }
-    Dendrite d1(Weight_set, pConnectedNeuro_set);       //建立一个临时的d1对象，存储输入的信息
-    m_MyDendrites.push_back(d1);                        //将d1的信息拷贝到m_MyDendrites
+    Dendrite d1(Weight_set, pConnectedNeuro_set);                       //建立一个临时的d1对象，存储输入的信息
+    m_MyDendrites.push_back(d1);                                        //将d1的信息拷贝到m_MyDendrites
     //d1的空间在函数结束后释放
 }
 
@@ -303,13 +303,6 @@ void Neuro::InsertADendrite(double Weight_set, Neuro* pConnectedNeuro_set) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::DeleteDendrite(const Neuro& Source) {
-    /*
-    if (m_MyDendrites.size() == 0)
-    {
-        throw std::invalid_argument("Error: There is no Dendrite!\n\tFail to erase the dendrite.");
-    }
-        */
-    //else        //若树突数量不为0
     if (m_MyDendrites.size() != 0)
     {
         MyDndrtType::const_iterator iter;
@@ -321,12 +314,6 @@ void Neuro::DeleteDendrite(const Neuro& Source) {
                 break;
             }
             iter++;
-            /*
-            if (iter == m_MyDendrites.end())                //若未找到，返回错误信息
-            {
-                throw std::invalid_argument("Error: Cannot find this Dendrite!\n\tFail to erase the dendrite.");
-            }
-                */
         }
     }
 }
@@ -341,13 +328,6 @@ void Neuro::DeleteDendrite(const Neuro& Source) {
 //----------------------------------------------------------------------------------------------------------
 
 void Neuro::DeleteDendrite(unsigned int IDToDelete) {
-    /*
-    if (m_MyDendrites.size() == 0)
-    {
-        throw std::invalid_argument("Error: There is no Dendrite!\n\tFail to erase the dendrite.");
-    }
-    else        //若树突数量不为0
-    */
     if (m_MyDendrites.size() != 0)
     {
         MyDndrtType::const_iterator iter;
@@ -362,12 +342,6 @@ void Neuro::DeleteDendrite(unsigned int IDToDelete) {
                 }
             }
             iter++;
-            /*
-            if (iter == m_MyDendrites.end())                //若未找到，返回错误信息
-            {
-                throw std::invalid_argument("Error: Cannot find this Dendrite!\n\tFail to erase the dendrite.");
-            }
-                */
         }
     }
 }
@@ -405,9 +379,3 @@ std::string Neuro::ToString() const {
 
 //初始化一开始神经元的数量为0
 unsigned int Neuro::s_uNeuroCount = 0;
-
-/*
-int main() {
-    const Neuro n1;
-}
-*/
