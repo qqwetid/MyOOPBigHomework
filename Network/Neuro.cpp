@@ -121,7 +121,7 @@ double Neuro::Signal() {
         }
         double AxonInput;                           //接收上一个神经元的轴突传下来的信号
         AxonInput = (iter->GetNeuro()/* 类型为Neuro*，为该树突指向的神经元 */)->SignalNow;
-        MySignal = iter->Signal(AxonInput);         //信号经过树突后存储到MySignal中
+        MySignal += iter->Signal(AxonInput);         //信号经过树突后存储到MySignal中
     }
     MySignal = (this->m_MySoma).Output(MySignal);   //信号经过胞体运算后存到MySignal
     MySignal = (this->m_MyAxon).Signal(MySignal);   //信号经过轴突运算后存到MySignal

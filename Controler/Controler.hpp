@@ -30,6 +30,24 @@ class Controler
         //静态函数创建单例实例
         static Controler* GetInstance();
 
+        //程序开始
+        void start() const;
+        //主界面
+        void MainInterface(Network* pMyNetwork) const;
+        //神经网络修改的界面
+        void Branch3Modify(Network* pMyNetwork) const;
+        //人工神经网络模型验证和推理的界面
+        void Branch5Inference(Network* pMyNetwork) const;
+
+        //输入int
+        void InputInt(int& Myint) const;
+        //输入unsigned int
+        void InputUint(unsigned int& MyUint) const;
+        //输入double
+        void InputDouble(double& Mydouble) const;
+        //判断是否继续
+        bool IsToContinue() const;
+
         /*人工神经网络模型导入*/
         //输入路径的函数
         void InputFilePath(char* FilePath, unsigned int PathLength) const;
@@ -77,6 +95,12 @@ class Controler
 
         /*显示统计信息*/
         void ShowElementNumbers(const Network& SourceNetwork) const;
+
+        /*人工神经网络模型验证和推理*/
+        //验证Network合理性
+        bool IsValid(const Network& SourceNetwork) const;
+        //执行推理
+        void Inference(Network& SourceNetwork, const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve) const;
     private:
         //定义私有的构造函数，防止外部代码直接实例化
         Controler();

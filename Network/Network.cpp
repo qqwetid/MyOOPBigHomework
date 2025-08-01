@@ -444,13 +444,24 @@ void Network::Inference(const double* DataInput, unsigned int SizeOfDataVector, 
     if (IsValid() == 1) {               //判断神经网络是否合法，如果合法则继续输出
         MyLayersType::iterator iter_Layers = m_MyLayers.begin();
         iter_Layers->ForwardPropagation(DataInput, SizeOfDataVector);   //将信号输入第一层并运算
+        /*test*/
+        //-----------------------------------------
+        double sig0 = iter_Layers->GetMyNeuros().at(0).SignalNow;
+        double sig1 = iter_Layers->GetMyNeuros().at(1).SignalNow;
+        double sig2 = iter_Layers->GetMyNeuros().at(2).SignalNow;
+        //-----------------------------------------
         iter_Layers++;
         while (iter_Layers != m_MyLayers.end()) {                       //将信号逐层传递
             iter_Layers->ForwardPropagation();
             iter_Layers++;
         }
-        iter_Layers = m_MyLayers.end() -1;                              //将指针指到最后一层
-        Layer& MyLastLayer = *iter_Layers;
+        //iter_Layers = m_MyLayers.rbegin();                              //将指针指到最后一层
+        /*test*/
+        //-----------------------------------------
+        sig0 = m_MyLayers.back().GetMyNeuros().at(3).SignalNow;
+        sig1 = m_MyLayers.back().GetMyNeuros().at(4).SignalNow;
+        sig2 = m_MyLayers.back().GetMyNeuros().at(5).SignalNow;
+        Layer& MyLastLayer = m_MyLayers.back();
         MyLastLayer.LayerSignalNow(SignalOutput, SizeToReserve);        //将信号保存，如果期望接收的大小和实际不符，会输出警告信息
     }
     else                                //如果神经网络不合法，则throw警告信息
@@ -653,9 +664,11 @@ void Network::InsertLayer(Layer& SourceLayer, unsigned int LayerNumber) {
 void Network::CnnctNursByDndrt(double WeightToSet, 
                                unsigned int CnnctLayerID, unsigned int CnnctNeuroID, 
                                unsigned int LyingLayerID, unsigned int LyingNeuroID) {
-    Layer& CnnctLayer = *(m_MyLayers.begin() + CnnctLayerID);
+    //Layer& CnnctLayer = *(m_MyLayers.begin() + CnnctLayerID);
+    Layer& CnnctLayer = m_MyLayers.at(CnnctLayerID);
     Neuro* pCnnctNeuro = CnnctLayer.Query(CnnctNeuroID);
-    Layer& LyingLayer = *(m_MyLayers.begin() + LyingLayerID);
+    //Layer& LyingLayer = *(m_MyLayers.begin() + LyingLayerID);
+    Layer& LyingLayer = m_MyLayers.at(LyingLayerID);
     Neuro* pLyingNeuro = LyingLayer.Query(LyingNeuroID);
     pLyingNeuro->InsertADendrite(WeightToSet, pCnnctNeuro);
 }
@@ -746,7 +759,8 @@ void Network::CnnctNursByDndrt(int FirstNeuro, int SecondNeuro, double Weight) {
 //----------------------------------------------------------------------------------------------------------
 
 void Network::DeleteLayer(unsigned int LayerIDToDelete) {
-    Layer& MyLayerToDelete = *(m_MyLayers.begin() + LayerIDToDelete);
+    //Layer& MyLayerToDelete = *(m_MyLayers.begin() + LayerIDToDelete);
+    Layer& MyLayerToDelete = m_MyLayers.at(LayerIDToDelete);
     //循环所有的树突，找到与MyLayerToDelete中神经元的连接
     MyLayersType::iterator iter_Layers = m_MyLayers.begin();
     while (iter_Layers != m_MyLayers.end()) {                           //对层循环

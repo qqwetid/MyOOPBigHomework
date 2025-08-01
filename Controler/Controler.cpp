@@ -29,6 +29,7 @@
 #include "../FileOperator/Importer/ANNImporter.hpp"         //导入ANNImporter类的声明
 #include "../FileOperator/Exporter/Exporter.hpp"            //导入Exporter类的声明
 #include "../FileOperator/Exporter/ANNExporter.hpp"         //导入ANNExporter类的声明
+#include "../View/View.hpp"                                 //导入用户界面
 #include "Controler.hpp"                                    //导入控制器
 
 //----------------------------------------------------------------------------------------------------------
@@ -64,6 +65,472 @@ Controler* Controler::GetInstance() {
 }
 
 //----------------------------------------------------------------------------------------------------------
+//函数名称：start
+//函数功能：开始程序
+//参数：无
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::start() const{
+    while (true) {
+        try
+        {
+            View::StartView();
+            char FilePath[100];
+            InputFilePath(FilePath, 100);                       //导入文件
+            Network* pMyNetwork = ImportNetwork(FilePath);      //导入神经网络
+            MainInterface(pMyNetwork);                          //进入主界面
+            break;
+        }
+        catch(int a)
+        {
+            if (a == -1) {
+                std::cout << "Exit the programme" << std::endl;
+            }
+            break;
+        }
+        catch(double b)
+        {
+            std::cout << "Your Program has not started yet! Let's restart." << std::endl;
+            continue;
+        }
+        
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            continue;
+        }
+        catch(...)
+        {
+            std::cout << "Caught an unknown exception! " << std::endl;
+            std::cout << "Your should restart." << std::endl;
+            bool WhetherToContinue = IsToContinue();
+            if (WhetherToContinue == true) {
+                continue;                                    //返回初始界面
+            }
+            else {
+                std::cout << "Exit the programme." << std::endl;
+                break;
+            }
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：MainInterface
+//函数功能：主界面
+//参数：Network* pMyNetwork
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::MainInterface(Network* pMyNetwork) const {
+    while (true)
+    {
+        try
+        {
+            View::Main();                                               //导入用户界面
+            unsigned int choice;
+            InputUint(choice);
+            switch (choice) {
+                case 1 : {
+                    char FilePath[100];
+                    InputFilePath(FilePath, 100);                       //导入文件
+                    Network* pAnotherNetwork = ImportNetwork(FilePath);   //导入神经网络
+                    delete pMyNetwork;
+                    pMyNetwork = pAnotherNetwork;
+                    //MainInterface(pMyNetwork);                        //进入主界面
+                    break;
+                }
+                case 2 : {
+                    char FilePath[100];
+                    InputFilePath(FilePath, 100);                       //输入文件路径
+                    if (pMyNetwork == nullptr) {                        //如果神经网络不见了
+                        std::cout << "Error: Your network is missed!" << std::endl;
+                        std::cout << "Your should restart." << std::endl;
+                        bool WhetherToContinue = IsToContinue();
+                        if (WhetherToContinue == true) {
+                            throw std::invalid_argument("Error: You missed your network."); //返回初始界面
+                        }
+                        else {
+                            throw int(-1);
+                        }
+                    }
+                    else {                                              //如果神经网络还在
+                        ExportNetwork(*pMyNetwork, FilePath);
+                        //MainInterface(pMyNetwork);                      //返回主界面
+                    }
+                    break;
+                }
+                case 3 : {
+                    Branch3Modify(pMyNetwork);
+                    break;
+                }
+                case 4 : {
+                    if (pMyNetwork == nullptr) {                        //如果神经网络不见了
+                        std::cout << "Error: Your network is missed!" << std::endl;
+                        std::cout << "Your should restart." << std::endl;
+                        bool WhetherToContinue = IsToContinue();
+                        if (WhetherToContinue == true) {
+                            start();                                    //返回初始界面
+                        }
+                        else {
+                            throw int(-1);
+                        }
+                    }
+                    else {
+                        ShowElementNumbers(*pMyNetwork);
+                        //MainInterface(pMyNetwork);
+                    }
+                    break;
+                }
+                case 5 : {
+                    Branch5Inference(pMyNetwork);
+                    break;
+                }
+                case 0 : {
+                    throw int(-1);
+                    break;
+                }
+                default:
+                    std::cout << "The number you've input is not 0~5." << std::endl;
+                    std::cout << "You should try again." << std::endl;
+                    bool WhetherToContinue = IsToContinue();
+                    if (WhetherToContinue == true) {
+                        MainInterface(pMyNetwork);
+                    }
+                    else {
+                        throw int(-1);
+                    }
+                    break;
+            }
+        }
+        catch(double b)
+        {
+            std::cout << "Back to main interface." << std::endl;
+            continue;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Branch3Modify
+//函数功能：分支3的界面
+//参数：Network* pMyNetwork
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::Branch3Modify(Network* pMyNetwork) const {
+    while (true)
+    {
+        if (pMyNetwork == nullptr) {                        //如果神经网络不见了
+            std::cout << "Error: Your network is missed!" << std::endl;
+            std::cout << "Your should restart." << std::endl;
+            bool WhetherToContinue = IsToContinue();
+            if (WhetherToContinue == true) {
+                start();                                    //返回初始界面
+            }
+            else {
+                throw int(-1);
+            }
+        }
+        try
+        {
+            View::Branch3();                                //导入用户界面
+            unsigned int choice;
+            InputUint(choice);
+            switch (choice) {
+                case 1 : {
+                    ShowNetwork(*pMyNetwork);
+                    break;
+                }
+                case 2 : {
+                    std::cout << "Input ID of the layer which is to be deleted:" << std::endl;
+                    unsigned int LayerID;
+                    InputUint(LayerID);
+                    DeleteLayer(*pMyNetwork, LayerID);
+                    break;
+                }
+                case 3 : {
+                    std::cout << "Input position of your layer which is to be inserted:" << std::endl;
+                    unsigned int LayerID;
+                    InputUint(LayerID);
+                    InsertLayer(*pMyNetwork, LayerID);
+                    break;
+                }
+                case 4 : {
+                    std::cout << "Input The layerID where you want to insert your neuron:" << std::endl;
+                    unsigned int LayerID;
+                    InputUint(LayerID);
+                    std::cout << "Input your Bias:" << std::endl;
+                    double Bias;
+                    InputDouble(Bias);
+                    std::cout << "Input your Activation Function: " << std::endl;
+                    unsigned int ActvtnFnctn;
+                    InputUint(ActvtnFnctn);
+                    std::cout << "Input ID of your neuron:" << std::endl;
+                    unsigned int NeuroID;
+                    InputUint(NeuroID);
+                    InsertNeuro(*pMyNetwork, LayerID, Bias, ActvtnFnctn, NeuroID);
+                    break;
+                }
+                case 5 : {
+                    std::cout << "Input position of your layer which you want to show:" << std::endl;
+                    unsigned int LayerID;
+                    InputUint(LayerID);
+                    ShowLayer(*pMyNetwork, LayerID);
+                    break;
+                }
+                case 6 : {
+                    std::cout << "Input ID of your neuron:" << std::endl;
+                    unsigned int NeuroID;
+                    InputUint(NeuroID);
+                    std::cout << "Input bias you want to set:" << std::endl;
+                    double Bias;
+                    InputDouble(Bias);
+                    SetBias(*pMyNetwork, NeuroID, Bias);
+                    break;
+                }
+                case 7 : {
+                    std::cout << "Input ID of your neuron:" << std::endl;
+                    unsigned int NeuroID;
+                    InputUint(NeuroID);
+                    ShowNeuro(*pMyNetwork, NeuroID);
+                    break;
+                }
+                case 8 : {
+                    std::cout << "Input ID of the neuron to delete:" << std::endl;
+                    unsigned int NeuroID;
+                    InputUint(NeuroID);
+                    DeleteNeuro(*pMyNetwork, NeuroID);
+                    break;
+                }
+                case 9 : {
+                    std::cout << "Input ID of your first neuro:" << std::endl;
+                    unsigned int FirstNeuroID;
+                    InputUint(FirstNeuroID);
+                    std::cout << "Input ID of your second neuro:" << std::endl;
+                    unsigned int SecondNeuroID;
+                    InputUint(SecondNeuroID);
+                    std::cout << "Input the weight of your dendrite:" << std::endl;
+                    double Weight;
+                    InputDouble(Weight);
+                    CnnctNeuro(*pMyNetwork, FirstNeuroID, SecondNeuroID, Weight);
+                    break;
+                }
+                case 0 : {
+                    throw double(1.0);
+                    break;
+                }
+                default : {
+                    std::cout << "The number you've input is not 0~9." << std::endl;
+                    std::cout << "You should try again." << std::endl;
+                    bool WhetherToContinue = IsToContinue();
+                    if (WhetherToContinue == true) {
+                        throw char('3');
+                    }
+                    else {
+                        throw double(1.0);
+                    }
+                    break;
+                }
+            }
+        }
+        catch(char c)
+        {
+            std::cout << std::endl;
+            std::cout << "Branch 3" << std::endl;
+            std::cout << std::endl;
+            continue;
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Branch5Inference
+//函数功能：分支5的界面
+//参数：Network* pMyNetwork
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::Branch5Inference(Network* pMyNetwork) const {
+    while (true) {
+        if (pMyNetwork == nullptr) {                        //如果神经网络不见了
+            std::cout << "Error: Your network is missed!" << std::endl;
+            std::cout << "Your should restart." << std::endl;
+            bool WhetherToContinue = IsToContinue();
+            if (WhetherToContinue == true) {
+                start();                                    //返回初始界面
+            }
+            else {
+                throw int(-1);
+            }
+        }
+        try
+        {
+            View::Branch5();                                //导入用户界面
+            unsigned int choice;
+            InputUint(choice);
+            switch (choice) {
+                case 1 : {
+                    IsValid(*pMyNetwork);
+                    std::cout << "Your network is valid!" << std::endl;
+                    break;
+                }
+                case 2 : {
+                    unsigned int NeuroNumInFstLyr  = pMyNetwork->GetNmbrOfNursInFstLyr();
+                    unsigned int NeuroNumInLstLyr = pMyNetwork->MyLayers.back().GetNeuroNumber();
+                    std::cout << "Please input " << NeuroNumInFstLyr << " double precision floating point numbers "
+                              << "as your input into your network:" << std::endl;
+                    double* Myinput = new double[NeuroNumInFstLyr];
+                    for (int i = 0; i < NeuroNumInFstLyr; i++) {
+                        if (i == 0) {
+                            std::cout << ">>> The 1st number: ";
+                        }
+                        else if (i == 1) {
+                            std::cout << ">>> The 2nd number: ";
+                        }
+                        else {
+                            std::cout << ">>> The " << i+1 << "th number: ";
+                        }
+                        InputDouble(*(Myinput + i));
+                    }
+                    double* Myoutput = new double[NeuroNumInLstLyr];
+                    std::cout << std::endl;
+                    std::cout << "Doing inference..." << std::endl;
+                    std::cout << std::endl;
+                    Inference(*pMyNetwork, Myinput, NeuroNumInFstLyr, Myoutput, NeuroNumInLstLyr);
+                    std::cout << "The result of inference:" << std::endl;
+                    std::cout << "[";
+                    for (int i = 0; i < NeuroNumInLstLyr; i++) {
+                        if (i != 0 && i % 10 == 0) {                //从第二行开始，第一个元素前加一个空格（对齐）
+                            std::cout << " " << std::endl;
+                        }
+                        std::cout << *(Myoutput + i);
+                        if (i != NeuroNumInLstLyr - 1) {            //如果不是最后一个元素，则加上逗号
+                            std::cout << ",\t";
+                            if (i % 10 == 9) {
+                                std::cout << std::endl;             //如果i mod 10 余 9，则换行（10个一换）
+                            }
+                        }
+                    }
+                    std::cout << "]" << std::endl;
+                    delete[] Myinput;
+                    delete[] Myoutput;
+                    break;
+                }
+                case 0 : {
+                    throw double(1.0);
+                    break;
+                }
+                default: {
+                    std::cout << "The number you've input is not 0~2." << std::endl;
+                    std::cout << "You should try again." << std::endl;
+                    bool WhetherToContinue = IsToContinue();
+                    if (WhetherToContinue == true) {
+                        throw char('5');
+                    }
+                    else {
+                        throw double(1.0);
+                    }
+                    break;
+                }
+            }
+        }
+        catch(char c)
+        {
+            std::cout << std::endl;
+            std::cout << "Branch 5" << std::endl;
+            std::cout << std::endl;
+            continue;
+        }
+        
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：InputInt
+//函数功能：输入整数
+//参数：    int& Myint      输出参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::InputInt(int& Myint) const {
+    int intInput;
+    while (true) {
+        std::cout << ">>> Enter an integer: ";
+        if (std::cin >> intInput) {
+            break;  // 输入成功
+        }
+        std::cin.clear();  // 清除错误标志
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+        std::cout << "Invalid input! Try again.\n";
+    }
+    std::cin.clear();  // 清除错误标志
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+    Myint = intInput;
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：InputUint
+//函数功能：输入无符号整数
+//参数：    unsigned int& Myint      输出参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::InputUint(unsigned int& MyUint) const {
+    unsigned int value;
+    while (true) {
+        std::cout << ">>> Enter an unsigned integer: ";
+        if (std::cin >> value) {
+            break;  // 输入成功
+        }
+        std::cin.clear();  // 清除错误标志
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+        std::cout << "Invalid input! Try again.\n";
+    }
+    std::cin.clear();  // 清除错误标志
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+    MyUint = value;
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Inputdouble
+//函数功能：输入双精度浮点数
+//参数：    double& Mydouble      输出参数
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::InputDouble(double& Mydouble) const {
+    double value;
+    while (true) {
+        std::cout << ">>> Enter a double precision floating point: ";
+        if (std::cin >> value) {
+            break;  // 输入成功
+        }
+        std::cin.clear();  // 清除错误标志
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+        std::cout << "Invalid input! Try again.\n";
+    }
+    std::cin.clear();  // 清除错误标志
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+    Mydouble = value;
+}
+
+//----------------------------------------------------------------------------------------------------------
 //函数名称：InputFilePath
 //函数功能：输入文件的路径，并判断是否合法
 //参数：
@@ -77,17 +544,77 @@ Controler* Controler::GetInstance() {
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::InputFilePath(char* FilePath, unsigned int PathLength) const {
-    std::cout << "请输入文件路径：" << std::endl;
-    std::string MyString;
-    std::getline(std::cin, MyString);
-    if (MyString.size() > PathLength) {                 //如果文件路径过长，throw错误信息
-        std::ostringstream Stream;
-        Stream << "Error: Your Path is too long!" << std::endl;
-        Stream << "\tLength of your path should not longer than " << PathLength << " characters.";
-        throw std::invalid_argument(Stream.str());
-        exit(1);
+    while (true) {
+        try
+        {
+            /*
+            std::cin.clear();                                   // 清除错误标志
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+            */
+            std::cout << ">>> Please input the path of your file (e.g. ./ANNFiles/simple.ANN):" << std::endl;
+            std::string MyString;
+            std::getline(std::cin, MyString);
+            if (MyString.size() > PathLength) {                 //如果文件路径过长，throw错误信息
+                std::ostringstream Stream;
+                Stream << "Error: Your Path is too long!" << std::endl;
+                Stream << "\tLength of your path should not longer than " << PathLength << " characters.";
+                throw std::invalid_argument(Stream.str());
+                exit(1);
+            }
+            strcpy_s(FilePath, PathLength + 1, MyString.c_str());   //如果没有问题，将路径复制给FilePath
+            break;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            bool WhetherContinue = IsToContinue();
+            if (WhetherContinue == true) {
+                continue;
+            }
+            else {
+                std::cout << "We will be back to main interface. Press 'y' to continue, and press 'n' to exit the programme." << std::endl;
+                bool WhetherNoExit = IsToContinue();
+                if (WhetherNoExit == true) {
+                    throw double(1.0);
+                }
+                else {
+                    throw int(-1);              //如果不继续，则throw-1以退出程序
+                }
+            }
+        }
     }
-    strcpy_s(FilePath, PathLength + 1, MyString.c_str());   //如果没有问题，将路径复制给FilePath
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：IsToContinue
+//函数功能：判断是否继续
+//参数：无
+//返回值：bool
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+bool Controler::IsToContinue() const {
+    while (true) {
+    std::cout << ">>> Whether to continue?[y/n]:";
+    char YN;
+    std::cin.get(YN);
+    std::cin.clear();  // 清除错误标志
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+        switch (YN) {
+            case 'Y' :              //Y和y则程序继续
+            case 'y' :
+                return true;
+                break;
+            case 'N' :
+            case 'n' :
+                return false;
+                break;
+            default :
+                break;
+        }
+        std::cout << "Invalid input! Try again.\n";
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -115,7 +642,9 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
     //删除构造函数带来的第一层
     pMyNetwork->DeleteLayer(0);
     //创建神经元
-    std::vector<Neuro> MyNeuros(MyNeuroVector.size());
+    //std::vector<Neuro> MyNeuros(MyNeuroVector.size());
+    std::vector<Neuro> MyNeuros;
+    MyNeuros.reserve(MyNeuroVector.size());
     std::vector<NeuroContainer>::const_iterator const_iter_NrVctr = MyNeuroVector.begin();
     while (const_iter_NrVctr != MyNeuroVector.end()) {          //将神经元构造出来
         Neuro ThisNeuro(const_iter_NrVctr->Bias, const_iter_NrVctr->NumOfActvtnFnctn, 100, (const_iter_NrVctr - MyNeuroVector.begin()));
@@ -133,14 +662,14 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
         const_iter_LyrVctr++;
     }
     /*test*/
-    unsigned int test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
+    //unsigned int test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
     //将树突插入神经网络
     std::set<SynapseContainer>::const_iterator const_iter_SynpsSet = MySynapseSet.begin();
     while (const_iter_SynpsSet != MySynapseSet.end()) {         //对突触的容器循环，将突触插入到神经网络
         pMyNetwork->CnnctNursByDndrt(const_iter_SynpsSet->CnnctNeuro, const_iter_SynpsSet->LyingNeuro, const_iter_SynpsSet->Weight);
         const_iter_SynpsSet++;
     }
-    test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
+    //test = pMyNetwork->QueryNeuro(3)->MyDendrites.size();
     std::cout << "Your Network " << NetworkName << " has been imported successfully!" << std::endl;
     std::cout << std::endl;
     return pMyNetwork;
@@ -159,14 +688,39 @@ Network* Controler::ImportNetwork(const std::vector<NeuroContainer>& MyNeuroVect
 //----------------------------------------------------------------------------------------------------------
 
 Network* Controler::ImportNetwork(const char* FilePath) const {
-    ANNImporter ImportANNFile(FilePath);
-    std::vector<NeuroContainer> MyNeuroVector;
-    std::set<SynapseContainer>  MySynapseSet;
-    std::vector<LayerContainer> MyLayerVector;
-    char NetworkName[40];
-    ImportANNFile.ReadFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
-    Network* pMyNetwork = ImportNetwork(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
-    return pMyNetwork;
+    while (true) {
+        try
+        {
+            ANNImporter ImportANNFile(FilePath);
+            std::vector<NeuroContainer> MyNeuroVector;
+            std::set<SynapseContainer>  MySynapseSet;
+            std::vector<LayerContainer> MyLayerVector;
+            char NetworkName[40];
+            ImportANNFile.ReadFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+            Network* pMyNetwork = ImportNetwork(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+            return pMyNetwork;
+            break;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            bool WhetherContinue = IsToContinue();
+            if (WhetherContinue == true) {
+                continue;
+            }
+            else {
+                std::cout << "We will be back to main interface. Press 'y' to continue, and press 'n' to exit the programme." << std::endl;
+                bool WhetherNoExit = IsToContinue();
+                if (WhetherNoExit == true) {
+                    throw double(1.0);
+                }
+                else {
+                    throw int(-1);              //如果不继续，则throw-1以退出程序
+                }
+            }
+        }
+        
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -250,15 +804,40 @@ void Controler::ExportNetwork(const Network& SourceNetwork,
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::ExportNetwork(const Network& SourceNetwork, const char* FilePath) const {
-    std::vector<NeuroContainer> MyNeuroVector;
-    std::set<SynapseContainer>  MySynapseSet;
-    std::vector<LayerContainer> MyLayerVector;
-    char NetworkName[40];
-    //将网络导出到容器
-    ExportNetwork(SourceNetwork, MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
-    //将容器导出到文件
-    ANNExporter OutFile(FilePath);
-    OutFile.OutputFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+    while (true) {
+        try
+        {
+            std::vector<NeuroContainer> MyNeuroVector;
+            std::set<SynapseContainer>  MySynapseSet;
+            std::vector<LayerContainer> MyLayerVector;
+            char NetworkName[40];
+            //将网络导出到容器
+            ExportNetwork(SourceNetwork, MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+            //将容器导出到文件
+            ANNExporter OutFile(FilePath);
+            OutFile.OutputFile(MyNeuroVector, MySynapseSet, MyLayerVector, NetworkName);
+            break;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            bool WhetherContinue = IsToContinue();
+            if (WhetherContinue == true) {
+                continue;
+            }
+            else {
+                std::cout << "We will be back to main interface. Press 'y' to continue, and press 'n' to exit the programme." << std::endl;
+                bool WhetherNoExit = IsToContinue();
+                if (WhetherNoExit == true) {
+                    throw double(1.0);
+                }
+                else {
+                    throw int(-1);              //如果不继续，则throw-1以退出程序
+                }
+            }
+        }
+        
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -274,9 +853,16 @@ void Controler::ExportNetwork(const Network& SourceNetwork, const char* FilePath
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::ShowNetwork(const Network& SourceNetwork) const {
-    std::cout << std::endl;
-    std::cout << SourceNetwork.ToString_brief() << std::endl;
-    std::cout << std::endl;
+    try
+    {
+        std::cout << std::endl;
+        std::cout << SourceNetwork.ToString_brief() << std::endl;
+        std::cout << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -293,7 +879,17 @@ void Controler::ShowNetwork(const Network& SourceNetwork) const {
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) const {
-    SourceNetwork.DeleteLayer(LayerNumber);
+    try
+    {
+        SourceNetwork.DeleteLayer(LayerNumber);
+        std::cout << std::endl;
+        std::cout << "Your layer is already deleted!" << std::endl;
+        std::cout << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -310,8 +906,15 @@ void Controler::DeleteLayer(Network& SourceNetwork, unsigned int LayerNumber) co
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::InsertLayer(Network& SourceNetwork, unsigned int LayerNumber) const {
-    Layer MyLayer;
-    SourceNetwork.InsertLayer(MyLayer, LayerNumber);
+    try
+    {
+        Layer MyLayer;
+        SourceNetwork.InsertLayer(MyLayer, LayerNumber);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -327,9 +930,16 @@ void Controler::InsertLayer(Network& SourceNetwork, unsigned int LayerNumber) co
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::ShowLayer(const Layer& SourceLayer) const {
-    std::cout << std::endl;
-    std::cout << SourceLayer.ToString_brief() << std::endl;
-    std::cout << std::endl;
+    try
+    {
+        std::cout << std::endl;
+        std::cout << SourceLayer.ToString_brief() << std::endl;
+        std::cout << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -371,18 +981,25 @@ void Controler::ShowLayer(const Network& SourceNetwork, unsigned int LayerNumber
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::InsertNeuro(Network& SourceNetwork, unsigned int LayerNumber, double BiasSet, unsigned int ActvtnFnctnSet, unsigned int NeuroIDSet) const {
-    if (SourceNetwork.QueryNeuro(NeuroIDSet) != nullptr) {  //如果原来神经网络中没有相同编号的神经元，则进行操作
-        throw std::invalid_argument("Error: There is already a Neuro with the same ID.\n\tPlease change the NeuroID and try again.");
-        exit(1);
-    }
-    else {
-        Layer* pThisLayer = SourceNetwork.QueryLayer(LayerNumber);
-        if (pThisLayer == nullptr) {
-            throw std::invalid_argument("Error: Cannot find such Layer.\n\tPlease check your LayerNumber.");
+    try
+    {
+        if (SourceNetwork.QueryNeuro(NeuroIDSet) != nullptr) {  //如果原来神经网络中没有相同编号的神经元，则进行操作
+            throw std::invalid_argument("Error: There is already a Neuro with the same ID.\n\tPlease change the NeuroID and try again.");
             exit(1);
         }
-        Neuro MyNeuro(BiasSet, ActvtnFnctnSet, 100, NeuroIDSet);
-        pThisLayer->InsertNeuro(MyNeuro);
+        else {
+            Layer* pThisLayer = SourceNetwork.QueryLayer(LayerNumber);
+            if (pThisLayer == nullptr) {
+                throw std::invalid_argument("Error: Cannot find such Layer.\n\tPlease check your LayerNumber.");
+                exit(1);
+            }
+            Neuro MyNeuro(BiasSet, ActvtnFnctnSet, 100, NeuroIDSet);
+            pThisLayer->InsertNeuro(MyNeuro);
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 }
 
@@ -418,7 +1035,14 @@ void Controler::InsertNeuro(Network& SourceNetwork, unsigned int LayerNumber, co
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::SetBias(Neuro& SourceNeuro, double BiasSet) const {
-    SourceNeuro.SetSoma().SetBias(BiasSet);
+    try
+    {
+        SourceNeuro.SetSoma().SetBias(BiasSet);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -460,55 +1084,62 @@ void Controler::SetBias(Network& SourceNetwork, unsigned int NeuroID, double Bia
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::ShowNeuro(const Network& SourceNetwork, unsigned int NeuroID) const {
-    const Neuro* pThisNeuro = SourceNetwork.QueryNeuro_noset(NeuroID);
-    if (pThisNeuro == nullptr) {
-        std::ostringstream Stream;
-        Stream << "Error: There is no neuro with id " << NeuroID << ".";
-        throw std::invalid_argument(Stream.str());
-    }
-    std::cout << std::endl;
-    std::cout << "----------------------------------------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
-    std::cout << "  **Neuro**" << std::endl;
-    std::cout << "  NeuroID: No." << NeuroID << " ." << std::endl;
-    std::cout << std::endl;
-    std::cout << "  Synapse from this neuron connect with:\n  ";
-    MyDndrtType::const_iterator const_iter_Dndrts = pThisNeuro->MyDendrites.begin();
-    while (const_iter_Dndrts != pThisNeuro->MyDendrites.end()) {
-        if (const_iter_Dndrts->GetNeuro() != nullptr) { //如果另一端有神经元，则输出神经元编号
-            std::cout << "No." << const_iter_Dndrts->GetNeuro()->NeuroID 
-                      << ", weight: " << const_iter_Dndrts->GetWeight() << "; ";
+    try
+    {
+        const Neuro* pThisNeuro = SourceNetwork.QueryNeuro_noset(NeuroID);
+        if (pThisNeuro == nullptr) {
+            std::ostringstream Stream;
+            Stream << "Error: There is no neuro with id " << NeuroID << ".";
+            throw std::invalid_argument(Stream.str());
         }
-        else {                                          //如果另一端没有神经元，则输出-1
-            std::cout << "-1(Dendrite), weight: " << const_iter_Dndrts->GetWeight() << "; ";
+        std::cout << std::endl;
+        std::cout << "----------------------------------------------------------------------------------------" << std::endl;
+        std::cout << std::endl;
+        std::cout << "  **Neuro**" << std::endl;
+        std::cout << "  NeuroID: No." << NeuroID << " ." << std::endl;
+        std::cout << std::endl;
+        std::cout << "  Synapse from this neuron connect with:\n  ";
+        MyDndrtType::const_iterator const_iter_Dndrts = pThisNeuro->MyDendrites.begin();
+        while (const_iter_Dndrts != pThisNeuro->MyDendrites.end()) {
+            if (const_iter_Dndrts->GetNeuro() != nullptr) { //如果另一端有神经元，则输出神经元编号
+                std::cout << "No." << const_iter_Dndrts->GetNeuro()->NeuroID 
+                          << ", weight: " << const_iter_Dndrts->GetWeight() << "; ";
+            }
+            else {                                          //如果另一端没有神经元，则输出-1
+                std::cout << "-1(Dendrite), weight: " << const_iter_Dndrts->GetWeight() << "; ";
+            }
+            const_iter_Dndrts++;
         }
-        const_iter_Dndrts++;
-    }
-    /*判断神经元是否在最后一层，如果在，需要输出轴突*/
-    const Layer& MyLastLayer = SourceNetwork.MyLayers.back();
-    const Neuro* pTestNeuro = MyLastLayer.Query_noset(NeuroID);
-    if (pTestNeuro != nullptr) {
-        std::cout << "-1(Axon), weight: 1.0; ";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
+        /*判断神经元是否在最后一层，如果在，需要输出轴突*/
+        const Layer& MyLastLayer = SourceNetwork.MyLayers.back();
+        const Neuro* pTestNeuro = MyLastLayer.Query_noset(NeuroID);
+        if (pTestNeuro != nullptr) {
+            std::cout << "-1(Axon), weight: 1.0; ";
+        }
+        std::cout << std::endl;
+        std::cout << std::endl;
 
-    std::cout << "  Synapse connect with this neuron is located at:\n  ";
-    for (const Layer& ThisLayer : SourceNetwork.MyLayers) {             //对层循环
-        for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {           //对神经元循环
-            const Neuro& ThisNeuro = ThisNeuroPair.second;
-            for (auto& ThisDendrite : ThisNeuro.MyDendrites) {          //对树突循环
-                if (ThisDendrite.GetNeuro() != nullptr) {
-                    if (ThisDendrite.GetNeuro()->NeuroID == NeuroID) {
-                        std::cout << "No." << ThisNeuro.NeuroID << ", weight: " << ThisDendrite.GetWeight() << "; ";
+        std::cout << "  Synapse connect with this neuron is located at:\n  ";
+        for (const Layer& ThisLayer : SourceNetwork.MyLayers) {             //对层循环
+            for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {           //对神经元循环
+                const Neuro& ThisNeuro = ThisNeuroPair.second;
+                for (auto& ThisDendrite : ThisNeuro.MyDendrites) {          //对树突循环
+                    if (ThisDendrite.GetNeuro() != nullptr) {
+                        if (ThisDendrite.GetNeuro()->NeuroID == NeuroID) {
+                            std::cout << "No." << ThisNeuro.NeuroID << ", weight: " << ThisDendrite.GetWeight() << "; ";
+                        }
                     }
                 }
             }
         }
+        std::cout << std::endl;
+        std::cout << "----------------------------------------------------------------------------------------" << std::endl;
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << "----------------------------------------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -525,36 +1156,43 @@ void Controler::ShowNeuro(const Network& SourceNetwork, unsigned int NeuroID) co
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::DeleteNeuro(Network& SourceNetwork, unsigned int NeuroID) const {
-    /*先删除连接它的树突*/
-    for (auto& ThisLayer : SourceNetwork.MyLayers) {
-        for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {
-            Neuro* pThisNeuro = SourceNetwork.QueryNeuro(ThisNeuroPair.first);
-            pThisNeuro->DeleteDendrite(NeuroID);
-            /*
-            MyDndrtType::iterator iter_Dndrts = pThisNeuro->SetDendrites().begin();
-            while (iter_Dndrts != pThisNeuro->SetDendrites().end()) {
-                if (iter_Dndrts->GetNeuro() != nullptr) {
-                    if (iter_Dndrts->GetNeuro()->NeuroID == NeuroID) {
-                        unsigned int iterPlace = iter_Dndrts - pThisNeuro->SetDendrites().begin();
-                        pThisNeuro->DeleteDendrite(NeuroID);
+    try
+    {
+        /*先删除连接它的树突*/
+        for (auto& ThisLayer : SourceNetwork.MyLayers) {
+            for (auto& ThisNeuroPair : ThisLayer.GetMyNeuros()) {
+                Neuro* pThisNeuro = SourceNetwork.QueryNeuro(ThisNeuroPair.first);
+                pThisNeuro->DeleteDendrite(NeuroID);
+                /*
+                MyDndrtType::iterator iter_Dndrts = pThisNeuro->SetDendrites().begin();
+                while (iter_Dndrts != pThisNeuro->SetDendrites().end()) {
+                    if (iter_Dndrts->GetNeuro() != nullptr) {
+                        if (iter_Dndrts->GetNeuro()->NeuroID == NeuroID) {
+                            unsigned int iterPlace = iter_Dndrts - pThisNeuro->SetDendrites().begin();
+                            pThisNeuro->DeleteDendrite(NeuroID);
+                        }
                     }
+                    iter_Dndrts++;
                 }
-                iter_Dndrts++;
+                    */
             }
-                */
+        }
+
+        /*再删除它*/
+        MyLayersType::const_iterator const_iter_Layers = SourceNetwork.MyLayers.begin();
+        while (const_iter_Layers != SourceNetwork.MyLayers.end()) {
+            const Layer& ThisLayer = *const_iter_Layers;
+            if (ThisLayer.Query_noset(NeuroID) != nullptr) {    //如果找到了这个神经元
+                Layer* pThisLayer = SourceNetwork.QueryLayer(const_iter_Layers - SourceNetwork.MyLayers.begin());
+                pThisLayer->DeleteNeuro(NeuroID);
+                break;
+            }
+            const_iter_Layers++;
         }
     }
-
-    /*再删除它*/
-    MyLayersType::const_iterator const_iter_Layers = SourceNetwork.MyLayers.begin();
-    while (const_iter_Layers != SourceNetwork.MyLayers.end()) {
-        const Layer& ThisLayer = *const_iter_Layers;
-        if (ThisLayer.Query_noset(NeuroID) != nullptr) {    //如果找到了这个神经元
-            Layer* pThisLayer = SourceNetwork.QueryLayer(const_iter_Layers - SourceNetwork.MyLayers.begin());
-            pThisLayer->DeleteNeuro(NeuroID);
-            break;
-        }
-        const_iter_Layers++;
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 }
 
@@ -615,13 +1253,74 @@ void Controler::CnnctNeuro(Network& SourceNetwork, unsigned int FirstNeuroID, un
 //----------------------------------------------------------------------------------------------------------
 
 void Controler::ShowElementNumbers(const Network& SourceNetwork) const {
-    std::cout << "**Network**" << std::endl;
-    std::cout << "NetworkName: " << SourceNetwork.NetworkName << std::endl;
-    std::cout << std::endl;
-    std::cout << "Number of Layers: \t" << SourceNetwork.GetNumberOfLayers() << std::endl;
-    std::cout << std::endl;
-    std::cout << "Number of Neurons: \t" << SourceNetwork.GetNumberOfNeuros() << std::endl;
-    std::cout << std::endl;
-    std::cout << "Number of Synapses: \t" << SourceNetwork.GetNumberOfSynapses() << std::endl;
-    std::cout << std::endl;
+    try
+    {
+        std::cout << "**Network**" << std::endl;
+        std::cout << "NetworkName: " << SourceNetwork.NetworkName << std::endl;
+        std::cout << std::endl;
+        std::cout << "Number of Layers: \t" << SourceNetwork.GetNumberOfLayers() << std::endl;
+        std::cout << std::endl;
+        std::cout << "Number of Neurons: \t" << SourceNetwork.GetNumberOfNeuros() << std::endl;
+        std::cout << std::endl;
+        std::cout << "Number of Synapses: \t" << SourceNetwork.GetNumberOfSynapses() << std::endl;
+        std::cout << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        std::cout << "We will be back to main interface." << std::endl;
+        throw double(1.0);
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：IsValid
+//函数功能：验证Network合理性
+//参数：
+/*
+    *   const Network& SourceNetwork          输出参数
+*/
+//返回值：bool
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+bool Controler::IsValid(const Network& SourceNetwork) const {
+    try
+    {
+        bool WillBeValid = SourceNetwork.IsValid();
+        return WillBeValid;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    return false;
+}
+
+//----------------------------------------------------------------------------------------------------------
+//函数名称：Inference
+//函数功能：执行推理
+//参数：
+/*
+    *   Network& SourceNetwork              输出参数
+    *   const double* DataInput,            输入参数，进行数据的导入
+    *   unsigned int SizeOfDataVector,      输入参数，提供导入数据的大小
+    *   double* SignalOutput,               输出参数，提供输出数组的接口
+    *   unsigned int SizeToReserve          输入参数，提供期望输出数组大小
+*/
+//返回值：无
+//开发者：Jason Cheng   日期：2025/8/1
+//更改记录
+//----------------------------------------------------------------------------------------------------------
+
+void Controler::Inference(Network& SourceNetwork, const double* DataInput, unsigned int SizeOfDataVector, double* SignalOutput, unsigned int SizeToReserve) const {
+    try
+    {
+        SourceNetwork.Inference(DataInput, SizeOfDataVector, SignalOutput, SizeToReserve);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }

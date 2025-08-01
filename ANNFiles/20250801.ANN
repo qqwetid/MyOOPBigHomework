@@ -1,0 +1,16 @@
+# ../../Code/CPP/MyOOPBigHomework/ANNFiles/20250801.ANN
+G RotationNetwork
+# 3 Neurons
+N 0.2222 1 
+N 0.111 0 
+N 0 0 
+# Layer 0: Neuron 0 to 0
+L 0 0 
+# Layer 1: Neuron 3 to 4
+L 3 4 
+# Neuron 0 to 0: has one Dendrite
+# Neuron3 to 4: has one Axon
+S 3 -1 1 
+S 4 -1 1 
+# Dendrites from Neuron 0
+S 0 4 1.5 

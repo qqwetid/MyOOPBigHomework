@@ -11,18 +11,25 @@
 #include "./Network/Neuro.hpp"                              //导入Neuro类的声明
 #include "./Network/Layer.hpp"                              //导入Layer类的声明
 #include "./Network/Network.hpp"                            //导入Network类的声明
-#include "./FileOperator/Container/NeuroContainer.hpp"
-#include "./FileOperator/Container/LayerContainer.hpp"
-#include "./FileOperator/Container/SynapseContainer.hpp"
+#include "./FileOperator/Container/NeuroContainer.hpp"      //导入NeuroContainer类的声明
+#include "./FileOperator/Container/LayerContainer.hpp"      //导入LayerContainer类的声明
+#include "./FileOperator/Container/SynapseContainer.hpp"    //导入SynapseContainer类的声明
 #include "./FileOperator/Importer/Importer.hpp"             //导入Importer类的声明
 #include "./FileOperator/Importer/ANNImporter.hpp"          //导入ANNImporter类的声明
 #include "./FileOperator/Exporter/Exporter.hpp"             //导入Exporter类的声明
 #include "./FileOperator/Exporter/ANNExporter.hpp"          //导入ANNExporter类的声明
+#include "./View/View.hpp"                                  //导入用户界面
 #include "./Controler/Controler.hpp"                        //导入Controler类的声明
 
 
 
 int main() {
+    Controler* pMyControler = Controler::GetInstance();
+    pMyControler->start();
+    /*
+    View::Main();
+    View::Branch3();
+    View::Branch5();
     try
     {
         Controler* pMyControler = Controler::GetInstance();
@@ -34,6 +41,10 @@ int main() {
                 pMyControler->ShowNeuro(*pMyNetwork, i);
             }
             pMyControler->ShowElementNumbers(*pMyNetwork);
+            double MyInput[3] = {1, 1, 1};
+            double MyOutput[3];
+            pMyControler->Inference(*pMyNetwork, MyInput, 3, MyOutput, 3);
+            std::cout << MyOutput[0] << ",," << MyOutput[1] << ",," << MyOutput[2] << std::endl;
         }
         delete pMyControler;
         delete pMyNetwork;
@@ -42,6 +53,7 @@ int main() {
     {
         std::cerr << e.what() << '\n';
     }
+    */
     
     /*
     std::cout << "Hello World" << std::endl;
